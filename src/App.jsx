@@ -60,7 +60,7 @@ const Layout = () => {
         position: 'relative'
       }}>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/mini_game" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/tictactoe" element={<TicTacToe />} />
           <Route path="/memory" element={<MemoryMatch />} />
