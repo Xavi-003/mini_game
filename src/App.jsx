@@ -59,7 +59,7 @@ const Layout = () => {
         height: isGameRoute ? '100%' : 'auto',
         position: 'relative'
       }}>
-        <Routes basename="/mini_game">
+        <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/tictactoe" element={<TicTacToe />} />
@@ -76,7 +76,7 @@ const Layout = () => {
 
 const AppContent = () => {
   return (
-    <Router>
+    <Router basename="/mini_game">
       <Layout />
     </Router>
   );
