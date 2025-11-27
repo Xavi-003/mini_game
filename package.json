@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "homepage": "https://xavi-003.github.io/mini_game/",
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "lucide-react": "^0.555.0",
