@@ -59,8 +59,8 @@ const Layout = () => {
         height: isGameRoute ? '100%' : 'auto',
         position: 'relative'
       }}>
-        <Routes>
-          <Route path="/mini_game" element={<Dashboard />} />
+        <Routes basename="/mini_game">
+          <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/tictactoe" element={<TicTacToe />} />
           <Route path="/memory" element={<MemoryMatch />} />
