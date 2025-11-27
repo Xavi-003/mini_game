@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Gamepad2, Brain, Ghost, Hand, Music } from 'lucide-react';
 
+/* ===================================
+   GAME INTRO COMPONENT
+   =================================== */
+
 const GameIntro = ({ gameId, onComplete }) => {
     const [visible, setVisible] = useState(true);
 
@@ -16,13 +20,14 @@ const GameIntro = ({ gameId, onComplete }) => {
     if (!visible) return null;
 
     const getIcon = () => {
+        const iconSize = typeof window !== 'undefined' && window.innerWidth < 768 ? 80 : 120;
         switch (gameId) {
-            case 'tictactoe': return <Gamepad2 size={120} color="#38bdf8" />;
-            case 'memory': return <Brain size={120} color="#a855f7" />;
-            case 'snake': return <Ghost size={120} color="#22c55e" />;
-            case 'rps': return <Hand size={120} color="#f472b6" />;
-            case 'simon': return <Music size={120} color="#facc15" />;
-            default: return <Gamepad2 size={120} color="white" />;
+            case 'tictactoe': return <Gamepad2 size={iconSize} color="#38bdf8" />;
+            case 'memory': return <Brain size={iconSize} color="#a855f7" />;
+            case 'snake': return <Ghost size={iconSize} color="#22c55e" />;
+            case 'rps': return <Hand size={iconSize} color="#f472b6" />;
+            case 'simon': return <Music size={iconSize} color="#facc15" />;
+            default: return <Gamepad2 size={iconSize} color="white" />;
         }
     };
 
@@ -55,13 +60,14 @@ const GameIntro = ({ gameId, onComplete }) => {
             left: 0,
             width: '100%',
             height: '100%',
-            background: 'rgba(15, 23, 42, 0.95)',
+            background: 'rgba(15, 23, 42, 0.98)',
             backdropFilter: 'blur(20px)',
             zIndex: 2000,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
+            padding: 'var(--space-md)',
             animation: visible ? 'fadeIn 0.5s ease-out' : 'fadeOut 0.5s ease-in forwards'
         }}>
             <style>{`
@@ -76,16 +82,21 @@ const GameIntro = ({ gameId, onComplete }) => {
         @keyframes fadeOut {
           to { opacity: 0; visibility: hidden; }
         }
+        @keyframes loading {
+          from { transform: translateX(-100%); }
+          to { transform: translateX(0); }
+        }
       `}</style>
 
-            <div style={{ position: 'relative' }}>
+            {/* Icon with Pulse Ring */}
+            <div style={{ position: 'relative', marginBottom: 'var(--space-lg)' }}>
                 <div style={{
                     position: 'absolute',
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: '200px',
-                    height: '200px',
+                    width: 'clamp(150px, 30vw, 200px)',
+                    height: 'clamp(150px, 30vw, 200px)',
                     borderRadius: '50%',
                     border: `4px solid ${getColor()}`,
                     animation: 'pulse-ring 2s infinite'
@@ -95,24 +106,27 @@ const GameIntro = ({ gameId, onComplete }) => {
                 </div>
             </div>
 
+            {/* Title */}
             <h1 style={{
-                fontSize: '4rem',
+                fontSize: 'clamp(2rem, 8vw, 4rem)',
                 fontWeight: '900',
                 color: 'white',
-                marginTop: '2rem',
+                textAlign: 'center',
                 textShadow: `0 0 20px ${getColor()}`,
                 animation: 'slide-up 0.5s ease-out 0.2s backwards',
-                letterSpacing: '4px'
+                letterSpacing: 'clamp(2px, 1vw, 4px)',
+                maxWidth: '90vw'
             }}>
                 {getTitle()}
             </h1>
 
+            {/* Loading Bar */}
             <div style={{
-                width: '200px',
+                width: 'clamp(150px, 40vw, 200px)',
                 height: '4px',
                 background: 'rgba(255,255,255,0.1)',
-                marginTop: '2rem',
-                borderRadius: '2px',
+                marginTop: 'var(--space-lg)',
+                borderRadius: 'var(--radius-full)',
                 overflow: 'hidden'
             }}>
                 <div style={{
@@ -122,12 +136,6 @@ const GameIntro = ({ gameId, onComplete }) => {
                     animation: 'loading 2s linear'
                 }} />
             </div>
-            <style>{`
-        @keyframes loading {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(0); }
-        }
-      `}</style>
         </div>
     );
 };

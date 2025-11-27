@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { RefreshCw, ArrowLeft, User, Bot, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -7,6 +6,10 @@ import WinnerModal from '../../components/WinnerModal';
 import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
+
+/* ===================================
+   TIC TAC TOE GAME
+   =================================== */
 
 const TicTacToe = () => {
     const { addPoints, incrementStreak, resetStreak } = useGame();
@@ -39,7 +42,6 @@ const TicTacToe = () => {
     const handleWin = useCallback((result) => {
         if (result === 'Draw') {
             setScores(prev => ({ ...prev, draws: prev.draws + 1 }));
-            SoundManager.playLose(); // Or a draw sound
             resetStreak();
         } else if (result === 'X') {
             setScores(prev => ({ ...prev, p1: prev.p1 + 1 }));
@@ -57,7 +59,9 @@ const TicTacToe = () => {
     const makeAiMove = useCallback((currentBoard) => {
         setIsAiThinking(true);
         setTimeout(() => {
-            const availableMoves = currentBoard.map((val, idx) => val === null ? idx : null).filter(val => val !== null);
+            const availableMoves = currentBoard
+                .map((val, idx) => val === null ? idx : null)
+                .filter(val => val !== null);
 
             // Simple AI: Try to win, then block, then random
             let move = -1;
@@ -92,7 +96,7 @@ const TicTacToe = () => {
             const newBoard = [...currentBoard];
             newBoard[move] = 'O';
             setBoard(newBoard);
-            SoundManager.playHover(); // AI move sound
+            SoundManager.playHover();
 
             const gameWinner = checkWinner(newBoard);
             if (gameWinner) {
@@ -147,40 +151,85 @@ const TicTacToe = () => {
         resetGame();
     };
 
+    // Game Intro Screen
+    if (showIntro) {
+        return <GameIntro gameId="tictactoe" onComplete={() => setShowIntro(false)} />;
+    }
+
+    // Mode Selection Screen
     if (!mode) {
         return (
-            <div className="container animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 'calc(100vh - 100px)', maxHeight: '100vh', padding: '0.5rem 1rem', overflow: 'hidden' }}>
-                <div className="card" style={{ textAlign: 'center', maxWidth: '600px', width: '100%', padding: '3rem' }}>
-                    <h2 className="title" style={{ fontSize: '3rem', marginBottom: '3rem' }}>Tic Tac Toe</h2>
-                    <div style={{ display: 'grid', gap: '1.5rem' }}>
-                        <button onClick={() => { setMode('PVE'); SoundManager.playClick(); }} className="btn btn-primary" style={{ fontSize: '1.5rem', padding: '2rem' }}>
-                            <Bot size={40} style={{ marginRight: '1rem' }} />
-                            1 Player (vs AI)
+            <div className="game-container animate-fade-in">
+                <div
+                    className="card"
+                    style={{
+                        textAlign: 'center',
+                        maxWidth: '600px',
+                        width: '100%',
+                    }}
+                >
+                    <h2 className="title" style={{
+                        fontSize: 'var(--text-2xl)',
+                        marginBottom: 'var(--space-lg)'
+                    }}>
+                        Tic Tac Toe
+                    </h2>
+                    <div style={{ display: 'grid', gap: 'var(--space-md)' }}>
+                        <button
+                            onClick={() => { setMode('PVE'); SoundManager.playClick(); }}
+                            className="btn btn-primary"
+                            style={{
+                                fontSize: 'var(--text-base)',
+                                padding: 'var(--space-md)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 'var(--space-sm)'
+                            }}
+                        >
+                            <Bot size={24} />
+                            <span>1 Player (vs AI)</span>
                         </button>
-                        <button onClick={() => { setMode('PVP'); SoundManager.playClick(); }} className="btn" style={{ fontSize: '1.5rem', padding: '2rem', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--accent)', color: 'var(--accent)' }}>
-                            <User size={40} style={{ marginRight: '1rem' }} />
-                            2 Players
+                        <button
+                            onClick={() => { setMode('PVP'); SoundManager.playClick(); }}
+                            className="btn btn-secondary"
+                            style={{
+                                fontSize: 'var(--text-base)',
+                                padding: 'var(--space-md)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: ' var(--space-sm)'
+                            }}
+                        >
+                            <User size={24} />
+                            <span>2 Players</span>
                         </button>
                     </div>
-                    <Link to="/" className="btn" style={{ marginTop: '3rem', color: 'var(--text-secondary)', fontSize: '1.1rem' }} onClick={() => SoundManager.playClick()}>
-                        <ArrowLeft size={24} style={{ marginRight: '0.5rem' }} /> Back to Dashboard
+                    <Link
+                        to="/"
+                        className="btn"
+                        style={{
+                            marginTop: 'var(--space-lg)',
+                            color: 'var(--text-secondary)',
+                            fontSize: 'var(--text-sm)',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 'var(--space-xs)'
+                        }}
+                        onClick={() => SoundManager.playClick()}
+                    >
+                        <ArrowLeft size={20} />
+                        <span>Back to Dashboard</span>
                     </Link>
                 </div>
             </div>
         );
     }
 
+    // Main Game Screen
     return (
-        <div className="container animate-fade-in" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100vh',
-            maxHeight: '100vh',
-            padding: '1rem',
-            overflow: 'hidden'
-        }}>
+        <div className="game-container animate-fade-in">
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -206,38 +255,43 @@ const TicTacToe = () => {
                 maxWidth: '650px',
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
-                maxHeight: '900px'
+                gap: 'var(--space-md)'
             }}>
                 {/* Header */}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: '1rem',
-                    flexShrink: 0
+                    flexWrap: 'wrap',
+                    gap: 'var(--space-sm)'
                 }}>
-                    <Link to="/" style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        color: 'var(--text-secondary)',
-                        fontSize: '0.95rem'
-                    }} onClick={() => SoundManager.playClick()}>
-                        <ArrowLeft size={18} /> Back
+                    <Link
+                        to="/"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 'var(--space-xs)',
+                            color: 'var(--text-secondary)',
+                            fontSize: 'var(--text-sm)'
+                        }}
+                        onClick={() => SoundManager.playClick()}
+                    >
+                        <ArrowLeft size={18} />
+                        <span>Back</span>
                     </Link>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
                         <button
                             onClick={() => { setMode(null); SoundManager.playClick(); }}
-                            className="btn"
-                            style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem' }}
+                            className="btn btn-secondary"
+                            style={{ padding: 'var(--space-sm) var(--space-md)', fontSize: 'var(--text-sm)' }}
                         >
                             Change Mode
                         </button>
                         <button
                             onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }}
-                            className="btn"
-                            style={{ padding: '0.5rem' }}
+                            className="btn btn-secondary"
+                            style={{ padding: 'var(--space-sm)', minWidth: '44px' }}
+                            aria-label="Help"
                         >
                             <HelpCircle size={18} />
                         </button>
@@ -247,63 +301,70 @@ const TicTacToe = () => {
                 {/* Game Card */}
                 <div className="card" style={{
                     textAlign: 'center',
-                    padding: '1.5rem',
+                    padding: 'var(--space-md)',
                     display: 'flex',
                     flexDirection: 'column',
-                    flex: '1 1 auto',
-                    minHeight: 0,
-                    justifyContent: 'space-between'
+                    gap: 'var(--space-md)'
                 }}>
                     {/* Score Board */}
                     <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-around',
-                        marginBottom: '1rem',
-                        padding: '0.75rem',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: 'var(--space-sm)',
+                        padding: 'var(--space-sm)',
                         background: 'rgba(0,0,0,0.2)',
-                        borderRadius: 'var(--radius)',
-                        flexShrink: 0
+                        borderRadius: 'var(--radius-lg)'
                     }}>
-                        <div style={{ textAlign: 'center', flex: 1 }}>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Player 1 (X)</div>
-                            <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--accent)' }}>{scores.p1}</div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', marginBottom: 'var(--space-xs)' }}>
+                                Player 1 (X)
+                            </div>
+                            <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'bold', color: 'var(--accent)' }}>
+                                {scores.p1}
+                            </div>
                         </div>
-                        <div style={{ textAlign: 'center', flex: 1 }}>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Draws</div>
-                            <div style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>{scores.draws}</div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', marginBottom: 'var(--space-xs)' }}>
+                                Draws
+                            </div>
+                            <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'bold' }}>
+                                {scores.draws}
+                            </div>
                         </div>
-                        <div style={{ textAlign: 'center', flex: 1 }}>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>{mode === 'PVE' ? 'AI (O)' : 'Player 2 (O)'}</div>
-                            <div style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--danger)' }}>{scores.p2}</div>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-secondary)', marginBottom: 'var(--space-xs)' }}>
+                                {mode === 'PVE' ? 'AI (O)' : 'Player 2 (O)'}
+                            </div>
+                            <div style={{ fontSize: 'var(--text-lg)', fontWeight: 'bold', color: 'var(--danger)' }}>
+                                {scores.p2}
+                            </div>
                         </div>
                     </div>
 
                     {/* Turn Indicator */}
                     <div style={{
-                        marginBottom: '1rem',
-                        fontSize: '1.1rem',
+                        fontSize: 'var(--text-base)',
                         fontWeight: 'bold',
-                        color: winner ? (winner === 'Draw' ? 'var(--text-primary)' : 'var(--success)') : 'var(--text-primary)',
-                        minHeight: '1.75rem',
-                        flexShrink: 0
+                        color: winner ? (winner === 'Draw' ? 'var(--text-primary)' : 'var(--success)') : 'var(--accent)',
+                        minHeight: '28px'
                     }}>
-                        {winner ? (winner === 'Draw' ? "It's a Draw!" : `Winner: ${winner === 'X' ? 'Player 1' : (mode === 'PVE' ? 'AI' : 'Player 2')}!`) : (isAiThinking ? 'AI is thinking...' : `Turn: ${isXNext ? 'Player 1 (X)' : (mode === 'PVE' ? 'AI (O)' : 'Player 2 (O)')}`)}
+                        {winner
+                            ? (winner === 'Draw' ? "It's a Draw!" : `Winner: ${winner === 'X' ? 'Player 1' : (mode === 'PVE' ? 'AI' : 'Player 2')}!`)
+                            : (isAiThinking ? 'AI is thinking...' : `Turn: ${isXNext ? 'Player 1 (X)' : (mode === 'PVE' ? 'AI (O)' : 'Player 2 (O)')}`)}
                     </div>
 
                     {/* Game Board */}
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: '0.75rem',
-                        marginBottom: '1rem',
+                        gap: 'var(--space-sm)',
                         backgroundColor: 'rgba(0,0,0,0.2)',
-                        padding: '0.75rem',
-                        borderRadius: 'var(--radius)',
-                        flex: '0 1 auto',
+                        padding: 'var(--space-sm)',
+                        borderRadius: 'var(--radius-lg)',
                         aspectRatio: '1',
-                        maxWidth: '500px',
+                        maxWidth: 'min(500px, 60vh)',
                         width: '100%',
-                        margin: '0 auto 1rem auto'
+                        margin: '0 auto'
                     }}>
                         {board.map((square, i) => (
                             <button
@@ -311,23 +372,24 @@ const TicTacToe = () => {
                                 onClick={() => handleClick(i)}
                                 style={{
                                     aspectRatio: '1',
-                                    fontSize: '3rem',
+                                    fontSize: 'clamp(2rem, 8vw, 3rem)',
                                     fontWeight: 'bold',
                                     backgroundColor: 'var(--bg-card)',
                                     border: '2px solid rgba(56, 189, 248, 0.3)',
-                                    borderRadius: '1rem',
-                                    color: square === 'X' ? 'var(--accent)' : (square === 'O' ? 'var(--danger)' : 'var(--text-secondary)'),
+                                    borderRadius: 'var(--radius-md)',
+                                    color: square === 'X' ? 'var(--accent)' : (square === 'O' ? 'var(--danger)' : 'transparent'),
                                     cursor: (winner || square || (mode === 'PVE' && !isXNext)) ? 'default' : 'pointer',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    transition: 'all 0.2s ease',
+                                    transition: 'all var(--transition-base)',
                                     boxShadow: square ? 'inset 0 2px 4px rgba(0,0,0,0.3)' : '0 4px 6px rgba(0,0,0,0.1)',
-                                    opacity: (winner || square || (mode === 'PVE' && !isXNext)) ? (square ? '1' : '0.7') : '1'
+                                    opacity: (winner || square || (mode === 'PVE' && !isXNext)) ? (square ? '1' : '0.7') : '1',
+                                    minHeight: '44px'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!winner && !square && !(mode === 'PVE' && !isXNext)) {
-                                        e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
+                                        e.currentTarget.style.backgroundColor = 'var(--bg-elevated)';
                                         e.currentTarget.style.borderColor = 'var(--accent)';
                                         e.currentTarget.style.transform = 'scale(1.05)';
                                     }
@@ -337,6 +399,8 @@ const TicTacToe = () => {
                                     e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.3)';
                                     e.currentTarget.style.transform = 'scale(1)';
                                 }}
+                                disabled={!!(winner || square || (mode === 'PVE' && !isXNext))}
+                                aria-label={`Cell ${i + 1}, ${square || 'empty'}`}
                             >
                                 {square}
                             </button>
@@ -345,49 +409,40 @@ const TicTacToe = () => {
 
                     {/* Action Buttons */}
                     <div style={{
-                        display: 'flex',
-                        gap: '0.75rem',
-                        flexShrink: 0,
-                        marginTop: 'auto',
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 'var(--space-sm)',
                         width: '100%'
                     }}>
                         <button
                             onClick={resetGame}
                             className="btn btn-primary"
                             style={{
-                                flex: '1 1 0',
-                                fontSize: '1rem',
-                                padding: '0.75rem',
+                                fontSize: 'var(--text-base)',
+                                padding: 'var(--space-md)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                minWidth: 0
+                                gap: 'var(--space-xs)'
                             }}
                         >
-                            <RefreshCw size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />
+                            <RefreshCw size={20} />
                             <span>Play Again</span>
                         </button>
                         <button
                             onClick={resetScores}
-                            className="btn"
+                            className="btn btn-secondary"
                             style={{
-                                flex: '1 1 0',
-                                backgroundColor: 'var(--bg-primary)',
-                                border: '1px solid var(--bg-card)',
-                                fontSize: '1rem',
-                                padding: '0.75rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                minWidth: 0
+                                fontSize: 'var(--text-base)',
+                                padding: 'var(--space-md)'
                             }}
                         >
-                            <span>Reset Scores</span>
+                            Reset Scores
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

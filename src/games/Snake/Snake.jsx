@@ -114,7 +114,7 @@ const Snake = () => {
     }, [moveSnake]);
 
     return (
-        <div className="container animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', maxHeight: '100vh', padding: '1rem', overflow: 'hidden' }}>
+        <div className="game-container animate-fade-in">
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -137,15 +137,15 @@ const Snake = () => {
                     </Link>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: '1rem', color: 'var(--text-secondary)' }}>High Score: {highScore}</div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--accent)' }}>Score: {score}</div>
+                            <div style={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)', color: 'var(--text-secondary)' }}>High Score: {highScore}</div>
+                            <div style={{ fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', fontWeight: 'bold', color: 'var(--accent)' }}>Score: {score}</div>
                         </div>
                         <button onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
                     </div>
                 </div>
 
-                <div className="card" style={{ textAlign: 'center', position: 'relative', padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
-                    <h2 className="title" style={{ fontSize: '1.4rem', marginBottom: '0.75rem', flexShrink: 0 }}>Snake</h2>
+                <div className="card" style={{ textAlign: 'center', position: 'relative', padding: 'clamp(1rem, 3vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
+                    <h2 className="title" style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)', marginBottom: 'clamp(0.5rem, 2vw, 0.75rem)', flexShrink: 0 }}>Snake</h2>
 
                     {gameOver && (
                         <div style={{
@@ -160,9 +160,9 @@ const Snake = () => {
                             zIndex: 10,
                             backdropFilter: 'blur(4px)'
                         }}>
-                            <h3 style={{ fontSize: '3.5rem', color: 'var(--danger)', marginBottom: '1rem' }}>Game Over</h3>
-                            <p style={{ fontSize: '2rem', marginBottom: '2rem' }}>Final Score: {score}</p>
-                            <button onClick={resetGame} className="btn btn-primary" style={{ fontSize: '1.5rem', padding: '1.5rem 3rem' }}>
+                            <h3 style={{ fontSize: 'clamp(2rem, 7vw, 3.5rem)', color: 'var(--danger)', marginBottom: '1rem' }}>Game Over</h3>
+                            <p style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)' }}>Final Score: {score}</p>
+                            <button onClick={resetGame} className="btn btn-primary" style={{ fontSize: 'clamp(1rem, 3vw, 1.5rem)', padding: 'clamp(1rem, 3vw, 1.5rem) clamp(2rem, 5vw, 3rem)' }}>
                                 <RefreshCw size={28} style={{ marginRight: '0.5rem' }} /> Play Again
                             </button>
                         </div>
@@ -179,7 +179,7 @@ const Snake = () => {
                         borderRadius: 'var(--radius)',
                         overflow: 'hidden',
                         flex: '0 1 auto',
-                        maxWidth: '450px',
+                        maxWidth: 'min(450px, 60vh)',
                         width: '100%',
                         margin: '0 auto 1rem auto'
                     }}>

@@ -10,14 +10,17 @@ import SoundManager from '../../utils/SoundManager';
 const CARD_EMOJIS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
 const CARD_PAIRS = [...CARD_EMOJIS, ...CARD_EMOJIS];
 
+/* ===================================
+   MEMORY MATCH GAME
+   =================================== */
+
 const MemoryMatch = () => {
-    const { addPoints, incrementStreak, resetStreak } = useGame();
+    const { addPoints, incrementStreak } = useGame();
     const [cards, setCards] = useState([]);
     const [flipped, setFlipped] = useState([]);
     const [solved, setSolved] = useState([]);
     const [disabled, setDisabled] = useState(false);
     const [moves, setMoves] = useState(0);
-    const [won, setWon] = useState(false);
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
@@ -85,8 +88,12 @@ const MemoryMatch = () => {
 
     const isWon = solved.length === cards.length && cards.length > 0;
 
+    if (showIntro) {
+        return <GameIntro gameId="memory" onComplete={() => setShowIntro(false)} />;
+    }
+
     return (
-        <div className="container animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', maxHeight: '100vh', padding: '1rem', overflow: 'hidden' }}>
+        <div className="game-container animate-fade-in">
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -107,81 +114,146 @@ const MemoryMatch = () => {
                 pointsEarned={20}
             />
 
-            {showIntro && <GameIntro gameId="memory" onComplete={() => setShowIntro(false)} />}
-
-            <div style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem', flexShrink: 0 }}>
-                    <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                        <ArrowLeft size={20} /> Back
+            <div style={{
+                width: '100%',
+                maxWidth: 'min(600px, 80vh)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-md)'
+            }}>
+                {/* Header */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: 'var(--space-sm)'
+                }}>
+                    <Link
+                        to="/"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 'var(--space-xs)',
+                            color: 'var(--text-secondary)',
+                            fontSize: 'var(--text-sm)'
+                        }}
+                        onClick={() => SoundManager.playClick()}
+                    >
+                        <ArrowLeft size={20} />
+                        <span>Back</span>
                     </Link>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--accent)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+                        <div style={{
+                            fontSize: 'var(--text-base)',
+                            fontWeight: 'bold',
+                            color: 'var(--accent)'
+                        }}>
                             Moves: {moves}
                         </div>
-                        <button onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
+                        <button
+                            onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }}
+                            className="btn btn-secondary"
+                            style={{ padding: 'var(--space-sm)', minWidth: '44px' }}
+                            aria-label="Help"
+                        >
+                            <HelpCircle size={20} />
+                        </button>
                     </div>
                 </div>
-            </div>
 
-            <div className="card" style={{ textAlign: 'center', padding: '0.75rem 0.5rem', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
-                <h2 className="title" style={{ fontSize: '1.2rem', marginBottom: '0.5rem', flexShrink: 0 }}>Memory Match</h2>
-
-                {isWon && (
-                    <div style={{ marginBottom: '0.5rem', color: 'var(--success)', fontSize: '1rem', fontWeight: 'bold', animation: 'bounce 0.5s ease', flexShrink: 0 }}>
-                        🎉 You Won in {moves} moves!
-                    </div>
-                )}
-
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(4, 1fr)',
-                    gap: '0.5rem',
-                    marginBottom: '0.75rem',
-                    flex: '0 1 auto',
-                    aspectRatio: '1',
-                    maxWidth: '400px',
-                    width: '100%',
-                    margin: '0 auto 0.75rem auto'
+                {/* Game Card */}
+                <div className="card" style={{
+                    textAlign: 'center',
+                    padding: 'var(--space-md)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-md)'
                 }}>
-                    {cards.map((card) => {
-                        const isFlipped = flipped.includes(card.id) || solved.includes(card.id);
-                        return (
-                            <button
-                                key={card.id}
-                                onClick={() => handleClick(card.id)}
-                                style={{
-                                    aspectRatio: '1',
-                                    backgroundColor: isFlipped ? 'var(--bg-card)' : 'var(--accent)',
-                                    border: isFlipped ? '2px solid var(--accent)' : 'none',
-                                    borderRadius: 'var(--radius)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: isFlipped ? 'default' : 'pointer',
-                                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0)',
-                                    position: 'relative',
-                                    perspective: '1000px',
-                                    boxShadow: isFlipped ? 'none' : '0 10px 15px -3px rgba(0,0,0,0.3)'
-                                }}
-                            >
-                                {isFlipped && <span style={{ fontSize: '2rem', transform: 'rotateY(180deg)' }}>{card.icon}</span>}
-                            </button>
-                        );
-                    })}
-                </div>
+                    <h2 className="title" style={{
+                        fontSize: 'var(--text-xl)',
+                        marginBottom: '0'
+                    }}>
+                        Memory Match
+                    </h2>
 
-                <button onClick={shuffleCards} className="btn btn-primary" style={{ width: '100%', fontSize: '0.95rem', padding: '0.65rem', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 'auto' }}>
-                    <RefreshCw size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />
-                    <span>Restart Game</span>
-                </button>
+                    {isWon && (
+                        <div style={{
+                            color: 'var(--success)',
+                            fontSize: 'var(--text-base)',
+                            fontWeight: 'bold',
+                            animation: 'bounce 0.5s ease'
+                        }}>
+                            🎉 You Won in {moves} moves!
+                        </div>
+                    )}
+
+                    {/* Card Grid */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: 'var(--space-sm)',
+                        aspectRatio: '1',
+                        maxWidth: '450px',
+                        width: '100%',
+                        margin: '0 auto'
+                    }}>
+                        {cards.map((card) => {
+                            const isFlipped = flipped.includes(card.id) || solved.includes(card.id);
+                            return (
+                                <button
+                                    key={card.id}
+                                    onClick={() => handleClick(card.id)}
+                                    style={{
+                                        aspectRatio: '1',
+                                        backgroundColor: isFlipped ? 'var(--bg-card)' : 'var(--accent)',
+                                        border: isFlipped ? '2px solid var(--accent)' : 'none',
+                                        borderRadius: 'var(--radius-md)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        cursor: isFlipped ? 'default' : 'pointer',
+                                        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                        transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0)',
+                                        boxShadow: isFlipped ? 'none' : '0 10px 15px -3px rgba(0,0,0,0.3)',
+                                        minHeight: '44px',
+                                        minWidth: '44px'
+                                    }}
+                                    disabled={isFlipped}
+                                    aria-label={isFlipped ? `Card ${card.id + 1}: ${card.icon}` : `Card ${card.id + 1}`}
+                                >
+                                    {isFlipped && (
+                                        <span style={{
+                                            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
+                                            transform: 'rotateY(180deg)'
+                                        }}>
+                                            {card.icon}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Restart Button */}
+                    <button
+                        onClick={shuffleCards}
+                        className="btn btn-primary"
+                        style={{
+                            width: '100%',
+                            fontSize: 'var(--text-base)',
+                            padding: 'var(--space-md)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 'var(--space-xs)'
+                        }}
+                    >
+                        <RefreshCw size={20} />
+                        <span>Restart Game</span>
+                    </button>
+                </div>
             </div>
-            <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-      `}</style>
         </div>
     );
 };
