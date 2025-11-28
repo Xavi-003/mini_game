@@ -53,7 +53,7 @@ const WinnerModal = ({ isOpen, onClose, winner, pointsEarned }) => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                backgroundColor: 'var(--bg-overlay)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -127,7 +127,7 @@ const WinnerModal = ({ isOpen, onClose, winner, pointsEarned }) => {
                 <h2 style={{
                     fontSize: 'clamp(1.75rem, 5vw, 2.5rem)',
                     marginBottom: 'var(--space-sm)',
-                    background: 'linear-gradient(to right, #fff, #38bdf8)',
+                    background: 'linear-gradient(to right, var(--text-primary), var(--accent))',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',

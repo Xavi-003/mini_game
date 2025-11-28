@@ -3,9 +3,11 @@ import { ArrowLeft, Play, RefreshCw, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorialModal from '../../components/TutorialModal';
 import WinnerModal from '../../components/WinnerModal';
-import GameIntro from '../../components/GameIntro'; // Added GameIntro import
+import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
+import GameContainer from '../../components/GameContainer';
+import useGameScale from '../../hooks/useGameScale';
 
 const COLORS = [
     { id: 'green', color: '#22c55e', active: '#4ade80', freq: 300 },
@@ -25,7 +27,9 @@ const SimonSays = () => {
     const [highScore, setHighScore] = useState(0);
     const [showTutorial, setShowTutorial] = useState(false);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
-    const [showIntro, setShowIntro] = useState(true); // Added showIntro state
+    const [showIntro, setShowIntro] = useState(true);
+    const containerRef = useRef(null);
+    const scale = useGameScale(containerRef, 600, 700);
 
     const { addPoints, incrementStreak, resetStreak } = useGame();
 
@@ -93,18 +97,46 @@ const SimonSays = () => {
         }
     };
 
-    return (
-        <div className="game-container animate-fade-in" style={{
-            minHeight: '100dvh',
-            width: '100vw',
+    if (showIntro) {
+        return <GameIntro gameId="simon" onComplete={() => setShowIntro(false)} />;
+    }
+
+    const headerContent = (
+        <div style={{
             display: 'flex',
-            flexDirection: 'column',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            justifyContent: 'center',
-            padding: 'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
-            overflow: 'hidden',
-            position: 'relative'
+            width: '100%'
         }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
+                <ArrowLeft size={20} /> Back
+            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>
+                    <span style={{ color: 'var(--accent)' }}>Score: {score}</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>Best: {highScore}</span>
+                </div>
+                <button onClick={() => { setShowTutorial(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
+            </div>
+        </div>
+    );
+
+    const footerContent = (
+        <button onClick={startGame} className="btn btn-primary" style={{
+            width: '100%',
+            padding: '1rem',
+            fontSize: '1.1rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            {gameOver ? <RefreshCw size={22} style={{ marginRight: '0.5rem' }} /> : <Play size={22} style={{ marginRight: '0.5rem' }} />}
+            <span>{gameOver ? 'Try Again' : 'Start Game'}</span>
+        </button>
+    );
+
+    return (
+        <GameContainer header={headerContent} footer={footerContent}>
             <TutorialModal
                 isOpen={showTutorial}
                 onClose={() => setShowTutorial(false)}
@@ -125,53 +157,32 @@ const SimonSays = () => {
                 pointsEarned={score * 2}
             />
 
-            {showIntro && <GameIntro gameId="simon" onComplete={() => setShowIntro(false)} />}
-
-            <div style={{
-                width: '100%',
-                maxWidth: 'min(600px, 95vw)',
-                height: '100%',
-                maxHeight: '100dvh',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                padding: '1rem'
-            }}>
-                {/* Header Section */}
-                <div style={{
+            <div
+                ref={containerRef}
+                style={{
+                    width: '100%',
+                    height: '100%',
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'center',
-                    marginBottom: '1rem',
-                    flexShrink: 0
-                }}>
-                    <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                        <ArrowLeft size={20} /> Back
-                    </Link>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>
-                            <span style={{ color: 'var(--accent)' }}>Score: {score}</span>
-                            <span style={{ color: 'var(--text-secondary)' }}>Best: {highScore}</span>
-                        </div>
-                        <button onClick={() => { setShowTutorial(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
-                    </div>
-                </div>
-
-                {/* Game Board Container */}
+                    overflow: 'hidden'
+                }}
+            >
                 <div className="card" style={{
                     position: 'relative',
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    flex: '1',
-                    minHeight: 0,
-                    overflow: 'hidden',
                     padding: '1rem',
-                    gap: '1rem'
+                    gap: '1rem',
+                    width: '600px',
+                    height: '600px'
                 }}>
                     <h2 className="title" style={{
-                        fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                        fontSize: '2rem',
                         margin: 0,
                         flexShrink: 0
                     }}>Simon Says</h2>
@@ -179,7 +190,7 @@ const SimonSays = () => {
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr',
-                        gap: 'clamp(10px, 2vw, 20px)',
+                        gap: '20px',
                         width: '100%',
                         maxWidth: '400px',
                         aspectRatio: '1/1',
@@ -224,23 +235,8 @@ const SimonSays = () => {
                         )}
                     </div>
                 </div>
-
-                {/* Footer Section */}
-                <div style={{ marginTop: '1rem', flexShrink: 0 }}>
-                    <button onClick={startGame} className="btn btn-primary" style={{
-                        width: '100%',
-                        padding: '1rem',
-                        fontSize: '1.1rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        {gameOver ? <RefreshCw size={22} style={{ marginRight: '0.5rem' }} /> : <Play size={22} style={{ marginRight: '0.5rem' }} />}
-                        <span>{gameOver ? 'Try Again' : 'Start Game'}</span>
-                    </button>
-                </div>
             </div>
-        </div>
+        </GameContainer>
     );
 };
 

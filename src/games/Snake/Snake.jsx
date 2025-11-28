@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ArrowLeft, Play, RefreshCw, Pause, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WinnerModal from '../../components/WinnerModal';
@@ -7,6 +6,8 @@ import TutorialModal from '../../components/TutorialModal';
 import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
+import GameContainer from '../../components/GameContainer';
+import useGameScale from '../../hooks/useGameScale';
 
 const GRID_SIZE = 20;
 // Dynamic cell size based on viewport would be ideal, but for now let's reduce it to fit standard screens
@@ -26,6 +27,8 @@ const Snake = () => {
     const [isPaused, setIsPaused] = useState(true);
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
+    const containerRef = useRef(null);
+    const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE + 100);
 
     const generateFood = useCallback(() => {
         return {
@@ -113,8 +116,51 @@ const Snake = () => {
         return () => clearInterval(gameLoop);
     }, [moveSnake]);
 
+    if (showIntro) {
+        return <GameIntro gameId="snake" onComplete={() => setShowIntro(false)} />;
+    }
+
+    const headerContent = (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
+                <ArrowLeft size={20} /> Back
+            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)', color: 'var(--text-secondary)' }}>High Score: {highScore}</div>
+                    <div style={{ fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', fontWeight: 'bold', color: 'var(--accent)' }}>Score: {score}</div>
+                </div>
+                <button onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
+            </div>
+        </div>
+    );
+
+    const footerContent = (
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', width: '100%' }}>
+            <button
+                onClick={() => { setIsPaused(!isPaused); SoundManager.playClick(); }}
+                className="btn"
+                style={{
+                    backgroundColor: 'var(--bg-card)',
+                    color: 'var(--text-primary)',
+                    flex: '1 1 0',
+                    fontSize: '1rem',
+                    padding: '0.75rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 0
+                }}
+                disabled={gameOver}
+            >
+                {isPaused ? <Play size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} /> : <Pause size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />}
+                <span>{isPaused ? 'Resume' : 'Pause'}</span>
+            </button>
+        </div>
+    );
+
     return (
-        <div className="game-container animate-fade-in">
+        <GameContainer header={headerContent} footer={footerContent}>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -128,30 +174,35 @@ const Snake = () => {
                 ]}
             />
 
-            {showIntro && <GameIntro gameId="snake" onComplete={() => setShowIntro(false)} />}
-
-            <div style={{ width: '100%', maxWidth: 'min(650px, 85vh)', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                        <ArrowLeft size={20} /> Back
-                    </Link>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontSize: 'clamp(0.8rem, 2vw, 1rem)', color: 'var(--text-secondary)' }}>High Score: {highScore}</div>
-                            <div style={{ fontSize: 'clamp(1.3rem, 4vw, 1.8rem)', fontWeight: 'bold', color: 'var(--accent)' }}>Score: {score}</div>
-                        </div>
-                        <button onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
-                    </div>
-                </div>
-
-                <div className="card" style={{ textAlign: 'center', position: 'relative', padding: 'clamp(0.5rem, 2vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
+            <div
+                ref={containerRef}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'hidden'
+                }}
+            >
+                <div style={{
+                    position: 'relative',
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
+                    width: '450px', // Fixed width for scaling
+                    textAlign: 'center',
+                    padding: 'var(--space-md)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between'
+                }}>
                     <h2 className="title" style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)', marginBottom: 'clamp(0.25rem, 2vw, 0.75rem)', flexShrink: 0 }}>Snake</h2>
 
                     {gameOver && (
                         <div style={{
                             position: 'absolute',
                             top: '0', left: '0', right: '0', bottom: '0',
-                            background: 'rgba(15, 23, 42, 0.9)',
+                            background: 'var(--bg-overlay)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -178,13 +229,8 @@ const Snake = () => {
                         aspectRatio: '1',
                         borderRadius: 'var(--radius)',
                         overflow: 'hidden',
-                        flex: '1 1 auto',
-                        minHeight: 0,
-                        maxWidth: 'min(450px, 100%)',
-                        maxHeight: '60vh',
-                        width: 'auto',
-                        margin: '0 auto 1rem auto',
-                        alignSelf: 'center'
+                        width: '100%',
+                        margin: '0 auto 1rem auto'
                     }}>
                         {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
                             const x = i % GRID_SIZE;
@@ -197,40 +243,18 @@ const Snake = () => {
                                 <div
                                     key={i}
                                     style={{
-                                        backgroundColor: isHead ? '#fff' : (isSnake ? 'var(--success)' : (isFood ? 'var(--danger)' : 'rgba(255,255,255,0.03)')),
+                                        backgroundColor: isHead ? 'var(--text-primary)' : (isSnake ? 'var(--success)' : (isFood ? 'var(--danger)' : 'var(--bg-elevated)')),
                                         borderRadius: isFood ? '50%' : (isSnake ? '4px' : '0'),
-                                        boxShadow: isHead ? '0 0 15px rgba(255,255,255,0.8)' : (isFood ? '0 0 10px var(--danger)' : 'none'),
+                                        boxShadow: isHead ? '0 0 15px var(--text-primary)' : (isFood ? '0 0 10px var(--danger)' : 'none'),
                                         transition: isHead || isFood ? 'all 0.1s' : 'none'
                                     }}
                                 />
                             );
                         })}
                     </div>
-
-                    <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexShrink: 0, marginTop: 'auto' }}>
-                        <button
-                            onClick={() => { setIsPaused(!isPaused); SoundManager.playClick(); }}
-                            className="btn"
-                            style={{
-                                backgroundColor: 'var(--bg-card)',
-                                color: 'var(--text-primary)',
-                                flex: '1 1 0',
-                                fontSize: '1rem',
-                                padding: '0.75rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                minWidth: 0
-                            }}
-                            disabled={gameOver}
-                        >
-                            {isPaused ? <Play size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} /> : <Pause size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />}
-                            <span>{isPaused ? 'Resume' : 'Pause'}</span>
-                        </button>
-                    </div>
                 </div>
-            </div >
-        </div >
+            </div>
+        </GameContainer>
     );
 };
 

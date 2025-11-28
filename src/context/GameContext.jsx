@@ -9,6 +9,7 @@ export const GameProvider = ({ children }) => {
     const [streak, setStreak] = useState(() => parseInt(localStorage.getItem('miniGameStreak')) || 0);
     const [profile, setProfile] = useState(() => JSON.parse(localStorage.getItem('miniGameProfile')) || { name: 'Player', avatar: '😎' });
     const [theme, setTheme] = useState(() => localStorage.getItem('miniGameTheme') || '#a855f7'); // Default Purple
+    const [mode, setMode] = useState(() => localStorage.getItem('miniGameMode') || 'dark'); // Default Dark
     const [scale, setScale] = useState(() => parseFloat(localStorage.getItem('miniGameScale')) || 1);
     const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem('miniGameFavorites')) || []);
 
@@ -28,6 +29,11 @@ export const GameProvider = ({ children }) => {
         localStorage.setItem('miniGameTheme', theme);
         document.documentElement.style.setProperty('--accent', theme);
     }, [theme]);
+
+    useEffect(() => {
+        localStorage.setItem('miniGameMode', mode);
+        document.documentElement.setAttribute('data-theme', mode);
+    }, [mode]);
 
     useEffect(() => {
         localStorage.setItem('miniGameScale', scale);
@@ -57,6 +63,10 @@ export const GameProvider = ({ children }) => {
         setTheme(newTheme);
     };
 
+    const toggleMode = () => {
+        setMode(prev => prev === 'dark' ? 'light' : 'dark');
+    };
+
     const updateScale = (newScale) => {
         setScale(newScale);
     };
@@ -71,12 +81,21 @@ export const GameProvider = ({ children }) => {
         });
     };
 
+    const resetProfile = () => {
+        setPoints(0);
+        setStreak(0);
+        setProfile({ name: 'Player', avatar: '😎' });
+        setFavorites([]);
+        // We preserve theme, mode, and scale as those are preferences, not progress
+    };
+
     return (
         <GameContext.Provider value={{
             points,
             streak,
             profile,
             theme,
+            mode,
             scale,
             favorites,
             addPoints,
@@ -84,8 +103,11 @@ export const GameProvider = ({ children }) => {
             resetStreak,
             updateProfile,
             updateTheme,
+            toggleMode,
             updateScale,
-            toggleFavorite
+            updateScale,
+            toggleFavorite,
+            resetProfile
         }}>
             {children}
         </GameContext.Provider>

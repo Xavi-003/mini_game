@@ -6,11 +6,26 @@ import MemoryMatch from './games/MemoryMatch/MemoryMatch';
 import Snake from './games/Snake/Snake';
 import RockPaperScissors from './games/RPS/RockPaperScissors';
 import SimonSays from './games/SimonSays/SimonSays';
+
+// New Games
+import TRexRunner from './games/TRexRunner/TRexRunner';
+import FlappyBird from './games/FlappyBird/FlappyBird';
+import JetpackJoyride from './games/JetpackJoyride/JetpackJoyride';
+import CrossyRoad from './games/CrossyRoad/CrossyRoad';
+import Stack from './games/Stack/Stack';
+import WhacAMole from './games/WhacAMole/WhacAMole';
+import Breakout from './games/Breakout/Breakout';
+import BubbleShooter from './games/BubbleShooter/BubbleShooter';
+import Peggle from './games/Peggle/Peggle';
+import PacMan from './games/PacMan/PacMan';
+import Tron from './games/Tron/Tron';
+import VampireSurvivors from './games/VampireSurvivors/VampireSurvivors';
 import Profile from './components/Profile';
 import SettingsBar from './components/SettingsBar';
 import { GameProvider, useGame } from './context/GameContext';
 import { Gamepad2, Trophy, Flame } from 'lucide-react';
 import SoundManager from './utils/SoundManager';
+import PageLoader from './components/PageLoader';
 
 /* ===================================
    HEADER COMPONENT
@@ -19,17 +34,17 @@ import SoundManager from './utils/SoundManager';
 const Header = () => {
   const { points, streak, profile } = useGame();
   const location = useLocation();
-  const isGameRoute = ['/memory', '/snake', '/rps', '/simon'].includes(location.pathname);
+  const isGameRoute = ['/memory', '/snake', '/rps', '/simon', '/trex', '/flappy', '/jetpack', '/crossy', '/stack', '/whac-a-mole', '/breakout', '/bubble', '/peggle', '/pacman', '/tron', '/vampire'].includes(location.pathname);
 
   return (
     <nav style={{
       height: 'var(--header-height)',
       padding: 'var(--space-sm) var(--space-md)',
-      borderBottom: '1px solid rgba(255,255,255,0.1)',
+      borderBottom: '1px solid var(--border-subtle)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      background: 'rgba(15, 23, 42, 0.95)',
+      background: 'var(--bg-header)',
       backdropFilter: 'blur(10px)',
       position: 'sticky',
       top: 0,
@@ -95,14 +110,14 @@ const Header = () => {
             alignItems: 'center',
             gap: 'var(--space-xs)',
             padding: 'var(--space-xs) var(--space-sm)',
-            background: 'rgba(255,255,255,0.1)',
+            background: 'var(--bg-elevated)',
             borderRadius: 'var(--radius-full)',
             fontSize: 'var(--text-sm)',
             transition: 'background-color var(--transition-base)'
           }}
           onClick={() => SoundManager.playClick()}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-elevated)'}
         >
           <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>{profile.avatar}</span>
           <span style={{ fontWeight: '600' }} className="hide-mobile">{profile.name}</span>
@@ -119,7 +134,7 @@ const Header = () => {
 const Layout = () => {
   const { scale } = useGame();
   const location = useLocation();
-  const isGameRoute = ['/tictactoe', '/memory', '/snake', '/rps', '/simon'].includes(location.pathname);
+  const isGameRoute = ['/memory', '/snake', '/rps', '/simon', '/trex', '/flappy', '/jetpack', '/crossy', '/stack', '/whac-a-mole', '/breakout', '/bubble', '/peggle', '/pacman', '/tron', '/vampire'].includes(location.pathname);
 
   return (
     <div className="app-container">
@@ -142,6 +157,20 @@ const Layout = () => {
           <Route path="/snake" element={<Snake />} />
           <Route path="/rps" element={<RockPaperScissors />} />
           <Route path="/simon" element={<SimonSays />} />
+
+          {/* New Games */}
+          <Route path="/trex" element={<TRexRunner />} />
+          <Route path="/flappy" element={<FlappyBird />} />
+          <Route path="/jetpack" element={<JetpackJoyride />} />
+          <Route path="/crossy" element={<CrossyRoad />} />
+          <Route path="/stack" element={<Stack />} />
+          <Route path="/whac-a-mole" element={<WhacAMole />} />
+          <Route path="/breakout" element={<Breakout />} />
+          <Route path="/bubble" element={<BubbleShooter />} />
+          <Route path="/peggle" element={<Peggle />} />
+          <Route path="/pacman" element={<PacMan />} />
+          <Route path="/tron" element={<Tron />} />
+          <Route path="/vampire" element={<VampireSurvivors />} />
         </Routes>
       </main>
       <SettingsBar />
@@ -166,8 +195,19 @@ const AppContent = () => {
    =================================== */
 
 function App() {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <GameProvider>
+      {isLoading && <PageLoader />}
       <AppContent />
     </GameProvider>
   );

@@ -81,9 +81,9 @@ const Profile = () => {
                     <div style={{
                         textAlign: 'center',
                         padding: 'var(--space-md)',
-                        background: 'rgba(56, 189, 248, 0.1)',
+                        background: 'var(--bg-elevated)',
                         borderRadius: 'var(--radius-lg)',
-                        border: '1px solid rgba(56, 189, 248, 0.2)'
+                        border: '1px solid var(--border-subtle)'
                     }}>
                         <Trophy size={32} color="var(--accent)" style={{ marginBottom: 'var(--space-xs)' }} />
                         <div style={{
@@ -104,9 +104,9 @@ const Profile = () => {
                     <div style={{
                         textAlign: 'center',
                         padding: 'var(--space-md)',
-                        background: 'rgba(249, 115, 22, 0.1)',
+                        background: 'var(--bg-elevated)',
                         borderRadius: 'var(--radius-lg)',
-                        border: '1px solid rgba(249, 115, 22, 0.2)'
+                        border: '1px solid var(--border-subtle)'
                     }}>
                         <Flame size={32} color="#f97316" style={{ marginBottom: 'var(--space-xs)' }} />
                         <div style={{
@@ -146,14 +146,14 @@ const Profile = () => {
                             width: '100%',
                             padding: 'var(--space-md)',
                             borderRadius: 'var(--radius-lg)',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            border: '1px solid var(--border-subtle)',
                             background: 'var(--bg-primary)',
                             color: 'var(--text-primary)',
                             fontSize: 'var(--text-base)',
                             transition: 'border-color var(--transition-base)'
                         }}
                         onFocus={(e) => e.currentTarget.style.borderColor = 'var(--accent)'}
-                        onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'}
+                        onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
                     />
                 </div>
 

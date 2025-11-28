@@ -1,12 +1,13 @@
-
-import React, { useState } from 'react';
-import { ArrowLeft, RefreshCw, Hand, Scissors, Scroll, HelpCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, RefreshCw, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorialModal from '../../components/TutorialModal';
 import WinnerModal from '../../components/WinnerModal';
 import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
+import GameContainer from '../../components/GameContainer';
+import useGameScale from '../../hooks/useGameScale';
 
 const CHOICES = [
     { name: 'rock', icon: '✊', beats: 'scissors' },
@@ -18,11 +19,13 @@ const RockPaperScissors = () => {
     const [playerChoice, setPlayerChoice] = useState(null);
     const [computerChoice, setComputerChoice] = useState(null);
     const [result, setResult] = useState(null);
-    const [score, setScore] = useState(0); // Changed from object to number
+    const [score, setScore] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
-    const [isTutorialOpen, setIsTutorialOpen] = useState(false); // Renamed from showTutorial
+    const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
-    const [showIntro, setShowIntro] = useState(true); // New state
+    const [showIntro, setShowIntro] = useState(true);
+    const containerRef = useRef(null);
+    const scale = useGameScale(containerRef, 700, 800);
 
     const { addPoints, incrementStreak, resetStreak } = useGame();
 
@@ -68,8 +71,33 @@ const RockPaperScissors = () => {
         SoundManager.playClick();
     };
 
+    if (showIntro) {
+        return <GameIntro gameId="rps" onComplete={() => setShowIntro(false)} />;
+    }
+
+    const headerContent = (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
+                <ArrowLeft size={20} /> Back
+            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '2rem', fontSize: '1.3rem', fontWeight: 'bold' }}>
+                    <span style={{ color: 'var(--success)' }}>You: {score}</span>
+                </div>
+                <button onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
+            </div>
+        </div>
+    );
+
+    const footerContent = (
+        <button onClick={resetGame} className="btn btn-primary" style={{ width: '100%', padding: 'clamp(0.5rem, 2vw, 1rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <RefreshCw size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />
+            <span>Reset Score</span>
+        </button>
+    );
+
     return (
-        <div className="game-container animate-fade-in">
+        <GameContainer header={headerContent} footer={footerContent}>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -90,25 +118,31 @@ const RockPaperScissors = () => {
                 pointsEarned={25}
             />
 
-            {showIntro && <GameIntro gameId="rps" onComplete={() => setShowIntro(false)} />}
-
-            <div style={{ width: '100%', maxWidth: 'min(700px, 85vh)', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexShrink: 0 }}>
-                    <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                        <ArrowLeft size={20} /> Back
-                    </Link>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '2rem', fontSize: '1.3rem', fontWeight: 'bold' }}>
-                            <span style={{ color: 'var(--success)' }}>You: {score}</span>
-                        </div>
-                        <button onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }} className="btn" style={{ padding: '0.5rem' }}><HelpCircle size={20} /></button>
-                    </div>
-                </div>
-
-                <div className="card" style={{ textAlign: 'center', padding: 'clamp(0.5rem, 2vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
+            <div
+                ref={containerRef}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'hidden'
+                }}
+            >
+                <div style={{
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
+                    width: '700px',
+                    textAlign: 'center',
+                    padding: 'clamp(0.5rem, 2vw, 1.5rem)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '2rem'
+                }}>
                     <h2 className="title" style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(0.25rem, 2vw, 1rem)', flexShrink: 0 }}>Rock Paper Scissors</h2>
 
-                    <div style={{ minHeight: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 'clamp(0.5rem, 2vw, 1rem)', flex: '1 1 auto', overflow: 'hidden' }}>
+                    <div style={{ minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 'clamp(0.5rem, 2vw, 1rem)', flex: '1 1 auto' }}>
                         {isAnimating ? (
                             <div style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 'bold', animation: 'bounce 0.5s infinite' }}>
                                 ✊ ✋ ✌️
@@ -150,7 +184,7 @@ const RockPaperScissors = () => {
                                     flexDirection: 'column',
                                     padding: 'clamp(0.5rem, 2vw, 1.5rem)',
                                     backgroundColor: 'var(--bg-card)',
-                                    border: '2px solid rgba(56, 189, 248, 0.3)',
+                                    border: '2px solid var(--accent-light)',
                                     gap: '0.5rem',
                                     opacity: isAnimating ? 0.5 : 1,
                                     transition: 'all 0.2s ease'
@@ -163,11 +197,6 @@ const RockPaperScissors = () => {
                             </button>
                         ))}
                     </div>
-
-                    <button onClick={resetGame} className="btn btn-primary" style={{ width: '100%', padding: 'clamp(0.5rem, 2vw, 1rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 'auto' }}>
-                        <RefreshCw size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />
-                        <span>Reset Score</span>
-                    </button>
                 </div>
             </div >
             <style>{`
@@ -176,7 +205,7 @@ const RockPaperScissors = () => {
     50 % { transform: translateY(-20px); }
 }
 `}</style>
-        </div >
+        </GameContainer>
     );
 };
 

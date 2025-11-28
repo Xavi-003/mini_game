@@ -17,7 +17,7 @@ const TutorialModal = ({ isOpen, onClose, title, instructions }) => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                backgroundColor: 'var(--bg-overlay)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -36,7 +36,7 @@ const TutorialModal = ({ isOpen, onClose, title, instructions }) => {
                     maxWidth: '600px',
                     width: '100%',
                     position: 'relative',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: '1px solid var(--border-subtle)',
                     boxShadow: 'var(--shadow-lg)',
                     animation: 'slideUp 0.3s ease',
                     maxHeight: '90vh',
@@ -116,7 +116,7 @@ const TutorialModal = ({ isOpen, onClose, title, instructions }) => {
                         >
                             <span style={{
                                 background: 'var(--accent)',
-                                color: 'var(--bg-primary)',
+                                color: 'var(--bg-card)',
                                 width: 'clamp(24px, 5vw, 28px)',
                                 height: 'clamp(24px, 5vw, 28px)',
                                 minWidth: '24px',

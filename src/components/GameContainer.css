@@ -1,0 +1,50 @@
+.game-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Fit within the parent container (main) */
+    width: 100%;
+    max-width: 600px;
+    /* Limit width on desktop */
+    margin: 0 auto;
+    overflow: hidden;
+    /* Prevent scrolling */
+    position: relative;
+}
+
+.game-header {
+    flex: 0 0 auto;
+    /* Fixed height based on content */
+    padding: var(--space-sm);
+    z-index: 10;
+}
+
+.game-board-area {
+    flex: 1 1 auto;
+    /* Take up remaining space */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding: var(--space-xs);
+}
+
+.game-controls {
+    flex: 0 0 auto;
+    /* Fixed height based on content */
+    padding: var(--space-md);
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    z-index: 10;
+    background: linear-gradient(to top, var(--bg-color) 0%, transparent 100%);
+}
+
+/* Ensure canvas/grid scales correctly */
+.game-board-area>* {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}

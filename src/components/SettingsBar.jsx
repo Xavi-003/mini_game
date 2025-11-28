@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { Settings, Minus, Plus, Palette, X } from 'lucide-react';
+import { Settings, Palette, X, Moon, Sun, Trash2 } from 'lucide-react';
 import SoundManager from '../utils/SoundManager';
 
 const THEMES = [
@@ -19,14 +19,8 @@ const THEMES = [
    =================================== */
 
 const SettingsBar = () => {
-    const { theme, scale, updateTheme, updateScale } = useGame();
+    const { theme, mode, updateTheme, toggleMode, resetProfile } = useGame();
     const [isOpen, setIsOpen] = useState(false);
-
-    const handleScaleChange = (delta) => {
-        const newScale = Math.max(0.8, Math.min(1.5, scale + delta));
-        updateScale(newScale);
-        SoundManager.playClick();
-    };
 
     const toggleSettings = () => {
         setIsOpen(!isOpen);
@@ -49,7 +43,7 @@ const SettingsBar = () => {
                 <div
                     className="animate-fade-in-scale"
                     style={{
-                        background: 'rgba(15, 23, 42, 0.98)',
+                        background: 'var(--bg-secondary)',
                         backdropFilter: 'blur(12px)',
                         padding: 'var(--space-md)',
                         borderRadius: 'var(--radius-lg)',
@@ -68,13 +62,14 @@ const SettingsBar = () => {
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        borderBottom: '1px solid rgba(255,255,255,0.1)',
+                        borderBottom: '1px solid var(--border-subtle)',
                         paddingBottom: 'var(--space-sm)'
                     }}>
                         <h3 style={{
                             margin: 0,
                             fontSize: 'var(--text-lg)',
-                            fontWeight: '700'
+                            fontWeight: '700',
+                            color: 'var(--text-primary)'
                         }}>
                             Settings
                         </h3>
@@ -95,7 +90,7 @@ const SettingsBar = () => {
                                 minHeight: '32px'
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                                e.currentTarget.style.backgroundColor = 'var(--bg-elevated)';
                                 e.currentTarget.style.color = 'var(--text-primary)';
                             }}
                             onMouseLeave={(e) => {
@@ -105,6 +100,38 @@ const SettingsBar = () => {
                             aria-label="Close settings"
                         >
                             <X size={20} />
+                        </button>
+                    </div>
+
+                    {/* Mode Toggle */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: 'var(--space-sm)',
+                        background: 'var(--bg-primary)',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid var(--border-subtle)'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)' }}>
+                            {mode === 'dark' ? <Moon size={20} color="var(--accent)" /> : <Sun size={20} color="var(--accent)" />}
+                            <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>
+                                {mode === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                            </span>
+                        </div>
+                        <button
+                            onClick={() => {
+                                toggleMode();
+                                SoundManager.playClick();
+                            }}
+                            className="btn"
+                            style={{
+                                padding: 'var(--space-xs) var(--space-sm)',
+                                background: 'var(--bg-elevated)',
+                                fontSize: 'var(--text-sm)'
+                            }}
+                        >
+                            Switch to {mode === 'dark' ? 'Light' : 'Dark'}
                         </button>
                     </div>
 
@@ -142,24 +169,22 @@ const SettingsBar = () => {
                                         minWidth: '44px',
                                         borderRadius: '50%',
                                         backgroundColor: t.color,
-                                        border: theme === t.color ? '3px solid white' : '3px solid rgba(255,255,255,0.2)',
+                                        border: theme === t.color ? '3px solid var(--bg-primary)' : '3px solid transparent',
                                         cursor: 'pointer',
                                         transition: 'all var(--transition-base)',
                                         transform: theme === t.color ? 'scale(1.1)' : 'scale(1)',
                                         boxShadow: theme === t.color
-                                            ? `0 0 0 4px ${t.color}40`
-                                            : '0 2px 5px rgba(0,0,0,0.2)'
+                                            ? `0 0 0 2px ${t.color}`
+                                            : 'none'
                                     }}
                                     onMouseEnter={(e) => {
                                         if (theme !== t.color) {
                                             e.currentTarget.style.transform = 'scale(1.05)';
-                                            e.currentTarget.style.borderColor = 'white';
                                         }
                                     }}
                                     onMouseLeave={(e) => {
                                         if (theme !== t.color) {
                                             e.currentTarget.style.transform = 'scale(1)';
-                                            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
                                         }
                                     }}
                                 />
@@ -167,91 +192,47 @@ const SettingsBar = () => {
                         </div>
                     </div>
 
-                    {/* Zoom/Scale Control */}
+                    {/* Danger Zone */}
                     <div>
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
+                            gap: 'var(--space-xs)',
                             marginBottom: 'var(--space-sm)',
-                            color: 'var(--text-secondary)',
+                            color: 'var(--danger)',
                             fontSize: 'var(--text-sm)',
                             fontWeight: '600'
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-xs)' }}>
-                                <Settings size={16} />
-                                <span>Zoom</span>
-                            </div>
-                            <span style={{
-                                color: 'var(--accent)',
-                                fontWeight: '700',
-                                fontSize: 'var(--text-base)'
-                            }}>
-                                {(scale * 100).toFixed(0)}%
-                            </span>
+                            <Trash2 size={16} />
+                            <span>Danger Zone</span>
                         </div>
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 'var(--space-sm)'
-                        }}>
-                            <button
-                                onClick={() => handleScaleChange(-0.1)}
-                                className="btn"
-                                style={{
-                                    padding: 'var(--space-xs)',
-                                    background: 'var(--bg-primary)',
-                                    minHeight: '44px',
-                                    minWidth: '44px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid rgba(255,255,255,0.1)'
-                                }}
-                                aria-label="Decrease zoom"
-                                disabled={scale <= 0.8}
-                            >
-                                <Minus size={16} />
-                            </button>
-                            <input
-                                type="range"
-                                min="0.8"
-                                max="1.5"
-                                step="0.1"
-                                value={scale}
-                                onChange={(e) => {
-                                    updateScale(parseFloat(e.target.value));
+                        <button
+                            onClick={() => {
+                                if (window.confirm('Are you sure you want to reset your profile? This will clear all points, streaks, and favorites. This action cannot be undone.')) {
+                                    resetProfile();
+                                    SoundManager.playLose(); // Play a sound to indicate significant action
+                                    setIsOpen(false);
+                                } else {
                                     SoundManager.playClick();
-                                }}
-                                style={{
-                                    flex: 1,
-                                    accentColor: 'var(--accent)',
-                                    cursor: 'pointer',
-                                    minHeight: '24px'
-                                }}
-                                aria-label="Zoom slider"
-                            />
-                            <button
-                                onClick={() => handleScaleChange(0.1)}
-                                className="btn"
-                                style={{
-                                    padding: 'var(--space-xs)',
-                                    background: 'var(--bg-primary)',
-                                    minHeight: '44px',
-                                    minWidth: '44px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: 'var(--radius-md)',
-                                    border: '1px solid rgba(255,255,255,0.1)'
-                                }}
-                                aria-label="Increase zoom"
-                                disabled={scale >= 1.5}
-                            >
-                                <Plus size={16} />
-                            </button>
-                        </div>
+                                }
+                            }}
+                            className="btn"
+                            style={{
+                                width: '100%',
+                                padding: 'var(--space-sm)',
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                color: 'var(--danger)',
+                                border: '1px solid var(--danger)',
+                                fontSize: 'var(--text-sm)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 'var(--space-sm)'
+                            }}
+                        >
+                            <Trash2 size={16} />
+                            Reset Profile
+                        </button>
                     </div>
                 </div>
             )}

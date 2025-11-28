@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, RefreshCw, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorialModal from '../../components/TutorialModal';
@@ -6,6 +6,8 @@ import WinnerModal from '../../components/WinnerModal';
 import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
+import GameContainer from '../../components/GameContainer';
+import useGameScale from '../../hooks/useGameScale';
 
 const CARD_EMOJIS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
 const CARD_PAIRS = [...CARD_EMOJIS, ...CARD_EMOJIS];
@@ -24,6 +26,8 @@ const MemoryMatch = () => {
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
+    const containerRef = useRef(null);
+    const scale = useGameScale(containerRef, 600, 800); // Approximate dimensions
 
     const shuffleCards = () => {
         const shuffled = CARD_PAIRS
@@ -92,8 +96,68 @@ const MemoryMatch = () => {
         return <GameIntro gameId="memory" onComplete={() => setShowIntro(false)} />;
     }
 
+    const headerContent = (
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%'
+        }}>
+            <Link
+                to="/"
+                style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-xs)',
+                    color: 'var(--text-secondary)',
+                    fontSize: 'var(--text-sm)'
+                }}
+                onClick={() => SoundManager.playClick()}
+            >
+                <ArrowLeft size={20} />
+                <span>Back</span>
+            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
+                <div style={{
+                    fontSize: 'var(--text-base)',
+                    fontWeight: 'bold',
+                    color: 'var(--accent)'
+                }}>
+                    Moves: {moves}
+                </div>
+                <button
+                    onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }}
+                    className="btn btn-secondary"
+                    style={{ padding: 'var(--space-sm)', minWidth: '44px' }}
+                    aria-label="Help"
+                >
+                    <HelpCircle size={20} />
+                </button>
+            </div>
+        </div>
+    );
+
+    const footerContent = (
+        <button
+            onClick={shuffleCards}
+            className="btn btn-primary"
+            style={{
+                width: '100%',
+                fontSize: 'var(--text-base)',
+                padding: 'var(--space-md)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 'var(--space-xs)'
+            }}
+        >
+            <RefreshCw size={20} />
+            <span>Restart Game</span>
+        </button>
+    );
+
     return (
-        <div className="game-container animate-fade-in">
+        <GameContainer header={headerContent} footer={footerContent}>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -114,61 +178,26 @@ const MemoryMatch = () => {
                 pointsEarned={20}
             />
 
-            <div style={{
-                width: '100%',
-                maxWidth: 'min(600px, 80vh)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--space-md)'
-            }}>
-                {/* Header */}
-                <div style={{
+            <div
+                ref={containerRef}
+                style={{
+                    width: '100%',
+                    height: '100%',
                     display: 'flex',
-                    justifyContent: 'space-between',
+                    justifyContent: 'center',
                     alignItems: 'center',
-                    flexWrap: 'wrap',
-                    gap: 'var(--space-sm)'
-                }}>
-                    <Link
-                        to="/"
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 'var(--space-xs)',
-                            color: 'var(--text-secondary)',
-                            fontSize: 'var(--text-sm)'
-                        }}
-                        onClick={() => SoundManager.playClick()}
-                    >
-                        <ArrowLeft size={20} />
-                        <span>Back</span>
-                    </Link>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
-                        <div style={{
-                            fontSize: 'var(--text-base)',
-                            fontWeight: 'bold',
-                            color: 'var(--accent)'
-                        }}>
-                            Moves: {moves}
-                        </div>
-                        <button
-                            onClick={() => { setIsTutorialOpen(true); SoundManager.playClick(); }}
-                            className="btn btn-secondary"
-                            style={{ padding: 'var(--space-sm)', minWidth: '44px' }}
-                            aria-label="Help"
-                        >
-                            <HelpCircle size={20} />
-                        </button>
-                    </div>
-                </div>
-
-                {/* Game Card */}
-                <div className="card" style={{
+                    overflow: 'hidden'
+                }}
+            >
+                <div style={{
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'center center',
                     textAlign: 'center',
                     padding: 'var(--space-md)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 'var(--space-md)'
+                    gap: 'var(--space-md)',
+                    width: '600px' // Fixed width for scaling
                 }}>
                     <h2 className="title" style={{
                         fontSize: 'var(--text-xl)',
@@ -194,7 +223,6 @@ const MemoryMatch = () => {
                         gridTemplateColumns: 'repeat(4, 1fr)',
                         gap: 'var(--space-sm)',
                         aspectRatio: '1',
-                        maxWidth: '450px',
                         width: '100%',
                         margin: '0 auto'
                     }}>
@@ -234,27 +262,9 @@ const MemoryMatch = () => {
                             );
                         })}
                     </div>
-
-                    {/* Restart Button */}
-                    <button
-                        onClick={shuffleCards}
-                        className="btn btn-primary"
-                        style={{
-                            width: '100%',
-                            fontSize: 'var(--text-base)',
-                            padding: 'var(--space-md)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: 'var(--space-xs)'
-                        }}
-                    >
-                        <RefreshCw size={20} />
-                        <span>Restart Game</span>
-                    </button>
                 </div>
             </div>
-        </div>
+        </GameContainer>
     );
 };
 

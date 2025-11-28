@@ -19,17 +19,35 @@ const BackgroundParticles = () => {
 
         const SHAPES = ['square', 'triangle', 'circle', 'cross', 'pacman'];
 
+        // Helper to get current theme colors
+        const getThemeColors = () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            return {
+                particleBase: isDark ? 255 : 0, // White in dark mode, Black in light mode
+                particleAlpha: isDark ? 0.05 : 0.03 // Slightly more transparent in light mode
+            };
+        };
+
         class Particle {
             constructor() {
+                this.reset();
+            }
+
+            reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 15 + 5; // Larger particles
+                this.size = Math.random() * 15 + 5;
                 this.speedX = (Math.random() - 0.5) * 0.5;
                 this.speedY = (Math.random() - 0.5) * 0.5;
                 this.rotation = Math.random() * Math.PI * 2;
                 this.rotationSpeed = (Math.random() - 0.5) * 0.02;
                 this.shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-                this.color = `rgba(255, 255, 255, ${Math.random() * 0.05 + 0.02})`; // Very subtle
+                this.updateColor();
+            }
+
+            updateColor() {
+                const { particleBase, particleAlpha } = getThemeColors();
+                this.color = `rgba(${particleBase}, ${particleBase}, ${particleBase}, ${Math.random() * particleAlpha + 0.02})`;
             }
 
             update() {
@@ -92,7 +110,7 @@ const BackgroundParticles = () => {
 
         const init = () => {
             particles = [];
-            const particleCount = Math.floor((canvas.width * canvas.height) / 15000); // Density based on screen size
+            const particleCount = Math.floor((canvas.width * canvas.height) / 15000);
             for (let i = 0; i < particleCount; i++) {
                 particles.push(new Particle());
             }
@@ -112,9 +130,24 @@ const BackgroundParticles = () => {
         init();
         animate();
 
+        // Observer for theme changes
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    particles.forEach(p => p.updateColor());
+                }
+            });
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
+
         return () => {
             window.removeEventListener('resize', resizeCanvas);
             cancelAnimationFrame(animationFrameId);
+            observer.disconnect();
         };
     }, []);
 
@@ -128,8 +161,9 @@ const BackgroundParticles = () => {
                 width: '100%',
                 height: '100%',
                 zIndex: -1,
-                background: 'radial-gradient(circle at center, #1e1b4b 0%, #020617 100%)', // Deep indigo to dark slate
-                pointerEvents: 'none'
+                background: 'radial-gradient(circle at center, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
+                pointerEvents: 'none',
+                transition: 'background 0.3s ease'
             }}
         />
     );
