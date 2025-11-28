@@ -105,7 +105,6 @@ export const GameProvider = ({ children }) => {
             updateTheme,
             toggleMode,
             updateScale,
-            updateScale,
             toggleFavorite,
             resetProfile
         }}>

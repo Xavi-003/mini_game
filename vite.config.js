@@ -9,11 +9,14 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      scope: '/mini_game/',
       manifest: {
         name: 'Mini Game Arcade',
         short_name: 'Arcade',
         description: 'A collection of retro mini-games.',
         theme_color: '#a855f7',
+        start_url: '/mini_game/',
+        scope: '/mini_game/',
         icons: [
           {
             src: 'pwa-192x192.png',
