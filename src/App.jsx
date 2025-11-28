@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
-import TicTacToe from './games/TicTacToe/TicTacToe';
+
 import MemoryMatch from './games/MemoryMatch/MemoryMatch';
 import Snake from './games/Snake/Snake';
 import RockPaperScissors from './games/RPS/RockPaperScissors';
@@ -19,7 +19,7 @@ import SoundManager from './utils/SoundManager';
 const Header = () => {
   const { points, streak, profile } = useGame();
   const location = useLocation();
-  const isGameRoute = ['/tictactoe', '/memory', '/snake', '/rps', '/simon'].includes(location.pathname);
+  const isGameRoute = ['/memory', '/snake', '/rps', '/simon'].includes(location.pathname);
 
   return (
     <nav style={{
@@ -137,7 +137,7 @@ const Layout = () => {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/tictactoe" element={<TicTacToe />} />
+
           <Route path="/memory" element={<MemoryMatch />} />
           <Route path="/snake" element={<Snake />} />
           <Route path="/rps" element={<RockPaperScissors />} />
@@ -155,7 +155,7 @@ const Layout = () => {
 
 const AppContent = () => {
   return (
-    <Router basename="/mini_game">
+    <Router basename={import.meta.env.BASE_URL}>
       <Layout />
     </Router>
   );

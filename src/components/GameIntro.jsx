@@ -22,7 +22,7 @@ const GameIntro = ({ gameId, onComplete }) => {
     const getIcon = () => {
         const iconSize = typeof window !== 'undefined' && window.innerWidth < 768 ? 80 : 120;
         switch (gameId) {
-            case 'tictactoe': return <Gamepad2 size={iconSize} color="#38bdf8" />;
+
             case 'memory': return <Brain size={iconSize} color="#a855f7" />;
             case 'snake': return <Ghost size={iconSize} color="#22c55e" />;
             case 'rps': return <Hand size={iconSize} color="#f472b6" />;
@@ -33,7 +33,7 @@ const GameIntro = ({ gameId, onComplete }) => {
 
     const getTitle = () => {
         switch (gameId) {
-            case 'tictactoe': return 'TIC TAC TOE';
+
             case 'memory': return 'MEMORY MATCH';
             case 'snake': return 'SNAKE';
             case 'rps': return 'ROCK PAPER SCISSORS';
@@ -44,7 +44,7 @@ const GameIntro = ({ gameId, onComplete }) => {
 
     const getColor = () => {
         switch (gameId) {
-            case 'tictactoe': return '#38bdf8';
+
             case 'memory': return '#a855f7';
             case 'snake': return '#22c55e';
             case 'rps': return '#f472b6';

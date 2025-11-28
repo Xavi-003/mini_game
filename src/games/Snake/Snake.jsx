@@ -130,7 +130,7 @@ const Snake = () => {
 
             {showIntro && <GameIntro gameId="snake" onComplete={() => setShowIntro(false)} />}
 
-            <div style={{ width: '100%', maxWidth: '650px', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '900px' }}>
+            <div style={{ width: '100%', maxWidth: 'min(650px, 85vh)', display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                     <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
                         <ArrowLeft size={20} /> Back
@@ -144,8 +144,8 @@ const Snake = () => {
                     </div>
                 </div>
 
-                <div className="card" style={{ textAlign: 'center', position: 'relative', padding: 'clamp(1rem, 3vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
-                    <h2 className="title" style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)', marginBottom: 'clamp(0.5rem, 2vw, 0.75rem)', flexShrink: 0 }}>Snake</h2>
+                <div className="card" style={{ textAlign: 'center', position: 'relative', padding: 'clamp(0.5rem, 2vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
+                    <h2 className="title" style={{ fontSize: 'clamp(1rem, 3vw, 1.4rem)', marginBottom: 'clamp(0.25rem, 2vw, 0.75rem)', flexShrink: 0 }}>Snake</h2>
 
                     {gameOver && (
                         <div style={{
@@ -174,14 +174,17 @@ const Snake = () => {
                         gap: '1px',
                         backgroundColor: 'var(--bg-card)',
                         border: '3px solid var(--bg-card)',
-                        marginBottom: '1rem',
+                        marginBottom: 'clamp(0.5rem, 2vw, 1rem)',
                         aspectRatio: '1',
                         borderRadius: 'var(--radius)',
                         overflow: 'hidden',
-                        flex: '0 1 auto',
-                        maxWidth: 'min(450px, 60vh)',
-                        width: '100%',
-                        margin: '0 auto 1rem auto'
+                        flex: '1 1 auto',
+                        minHeight: 0,
+                        maxWidth: 'min(450px, 100%)',
+                        maxHeight: '60vh',
+                        width: 'auto',
+                        margin: '0 auto 1rem auto',
+                        alignSelf: 'center'
                     }}>
                         {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
                             const x = i % GRID_SIZE;

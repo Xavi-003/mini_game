@@ -11,15 +11,6 @@ import BackgroundParticles from './BackgroundParticles';
 
 const games = [
     {
-        id: 'tictactoe',
-        title: 'Tic Tac Toe',
-        description: 'Classic strategy game. Play against AI or a friend!',
-        icon: <Gamepad2 size={48} color="#38bdf8" />,
-        path: '/tictactoe',
-        color: 'rgba(56, 189, 248, 0.1)',
-        borderColor: '#38bdf8'
-    },
-    {
         id: 'memory',
         title: 'Memory Match',
         description: 'Test your memory by matching pairs of cards.',

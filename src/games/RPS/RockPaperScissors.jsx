@@ -92,7 +92,7 @@ const RockPaperScissors = () => {
 
             {showIntro && <GameIntro gameId="rps" onComplete={() => setShowIntro(false)} />}
 
-            <div style={{ width: '100%', maxWidth: 'min(700px, 80vh)', display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div style={{ width: '100%', maxWidth: 'min(700px, 85vh)', display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexShrink: 0 }}>
                     <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
                         <ArrowLeft size={20} /> Back
@@ -105,32 +105,32 @@ const RockPaperScissors = () => {
                     </div>
                 </div>
 
-                <div className="card" style={{ textAlign: 'center', padding: 'clamp(1rem, 4vw, 2rem) clamp(0.75rem, 3vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
-                    <h2 className="title" style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(0.75rem, 3vw, 1.5rem)', flexShrink: 0 }}>Rock Paper Scissors</h2>
+                <div className="card" style={{ textAlign: 'center', padding: 'clamp(0.5rem, 2vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
+                    <h2 className="title" style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(0.25rem, 2vw, 1rem)', flexShrink: 0 }}>Rock Paper Scissors</h2>
 
-                    <div style={{ minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', flex: '0 1 auto' }}>
+                    <div style={{ minHeight: '0', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 'clamp(0.5rem, 2vw, 1rem)', flex: '1 1 auto', overflow: 'hidden' }}>
                         {isAnimating ? (
                             <div style={{ fontSize: 'clamp(2rem, 6vw, 3.5rem)', fontWeight: 'bold', animation: 'bounce 0.5s infinite' }}>
                                 ✊ ✋ ✌️
                             </div>
                         ) : result ? (
-                            <div className="animate-fade-in">
-                                <h3 style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(0.75rem, 3vw, 1.5rem)', color: result === 'You Win!' ? 'var(--success)' : (result === 'Draw' ? 'var(--text-primary)' : 'var(--danger)') }}>
+                            <div className="animate-fade-in" style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                <h3 style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(0.5rem, 2vw, 1rem)', color: result === 'You Win!' ? 'var(--success)' : (result === 'Draw' ? 'var(--text-primary)' : 'var(--danger)'), flexShrink: 0 }}>
                                     {result}
                                 </h3>
-                                <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(1.5rem, 5vw, 3rem)', alignItems: 'center' }}>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                                        <div style={{ padding: 'clamp(1rem, 3vw, 1.5rem)', background: 'var(--bg-card)', borderRadius: '50%', border: '3px solid var(--success)', boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)' }}>
-                                            <span style={{ fontSize: 'clamp(2rem, 7vw, 3.5rem)' }}>{playerChoice.icon}</span>
+                                <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(1rem, 4vw, 3rem)', alignItems: 'center', flex: '1 1 auto' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                                        <div style={{ padding: 'clamp(0.5rem, 2vw, 1.5rem)', background: 'var(--bg-card)', borderRadius: '50%', border: '3px solid var(--success)', boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)' }}>
+                                            <span style={{ fontSize: 'clamp(1.5rem, 5vw, 3.5rem)' }}>{playerChoice.icon}</span>
                                         </div>
-                                        <span style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', fontWeight: 'bold' }}>You</span>
+                                        <span style={{ fontSize: 'clamp(0.8rem, 2.5vw, 1.2rem)', fontWeight: 'bold' }}>You</span>
                                     </div>
-                                    <div style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', fontWeight: 'bold', color: 'var(--text-secondary)' }}>VS</div>
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-                                        <div style={{ padding: 'clamp(1rem, 3vw, 1.5rem)', background: 'var(--bg-card)', borderRadius: '50%', border: '3px solid var(--danger)', boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)' }}>
-                                            <span style={{ fontSize: 'clamp(2rem, 7vw, 3.5rem)' }}>{computerChoice.icon}</span>
+                                    <div style={{ fontSize: 'clamp(1rem, 3vw, 2rem)', fontWeight: 'bold', color: 'var(--text-secondary)' }}>VS</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+                                        <div style={{ padding: 'clamp(0.5rem, 2vw, 1.5rem)', background: 'var(--bg-card)', borderRadius: '50%', border: '3px solid var(--danger)', boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)' }}>
+                                            <span style={{ fontSize: 'clamp(1.5rem, 5vw, 3.5rem)' }}>{computerChoice.icon}</span>
                                         </div>
-                                        <span style={{ fontSize: 'clamp(1rem, 3vw, 1.2rem)', fontWeight: 'bold' }}>CPU</span>
+                                        <span style={{ fontSize: 'clamp(0.8rem, 2.5vw, 1.2rem)', fontWeight: 'bold' }}>CPU</span>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +139,7 @@ const RockPaperScissors = () => {
                         )}
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: 'clamp(0.5rem, 2vw, 1rem)', flexShrink: 0 }}>
                         {CHOICES.map((choice) => (
                             <button
                                 key={choice.id}
@@ -148,23 +148,23 @@ const RockPaperScissors = () => {
                                 className="btn"
                                 style={{
                                     flexDirection: 'column',
-                                    padding: '1.5rem',
+                                    padding: 'clamp(0.5rem, 2vw, 1.5rem)',
                                     backgroundColor: 'var(--bg-card)',
                                     border: '2px solid rgba(56, 189, 248, 0.3)',
-                                    gap: '0.75rem',
+                                    gap: '0.5rem',
                                     opacity: isAnimating ? 0.5 : 1,
                                     transition: 'all 0.2s ease'
                                 }}
                                 onMouseOver={(e) => !isAnimating && (e.currentTarget.style.transform = 'translateY(-5px)')}
                                 onMouseOut={(e) => !isAnimating && (e.currentTarget.style.transform = 'translateY(0)')}
                             >
-                                <span style={{ fontSize: 'clamp(2rem, 6vw, 3rem)' }}>{choice.icon}</span>
-                                <span style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', textTransform: 'capitalize' }}>{choice.name}</span>
+                                <span style={{ fontSize: 'clamp(1.5rem, 5vw, 3rem)' }}>{choice.icon}</span>
+                                <span style={{ fontSize: 'clamp(0.7rem, 2vw, 1.1rem)', textTransform: 'capitalize' }}>{choice.name}</span>
                             </button>
                         ))}
                     </div>
 
-                    <button onClick={resetGame} className="btn btn-primary" style={{ width: '100%', padding: 'clamp(0.75rem, 2.5vw, 1rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 'auto' }}>
+                    <button onClick={resetGame} className="btn btn-primary" style={{ width: '100%', padding: 'clamp(0.5rem, 2vw, 1rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 'auto' }}>
                         <RefreshCw size={20} style={{ marginRight: '0.5rem', flexShrink: 0 }} />
                         <span>Reset Score</span>
                     </button>

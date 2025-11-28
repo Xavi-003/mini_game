@@ -19,6 +19,7 @@ const WinnerModal = ({ isOpen, onClose, winner, pointsEarned }) => {
             const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
 
             const randomInRange = (min, max) => Math.random() * (max - min) + min;
+            const clamp = (min, val, max) => Math.min(Math.max(val, min), max);
 
             const interval = setInterval(() => {
                 const timeLeft = animationEnd - Date.now();

@@ -94,7 +94,17 @@ const SimonSays = () => {
     };
 
     return (
-        <div className="game-container animate-fade-in">
+        <div className="game-container animate-fade-in" style={{
+            minHeight: '100dvh',
+            width: '100vw',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
+            overflow: 'hidden',
+            position: 'relative'
+        }}>
             <TutorialModal
                 isOpen={showTutorial}
                 onClose={() => setShowTutorial(false)}
@@ -117,13 +127,29 @@ const SimonSays = () => {
 
             {showIntro && <GameIntro gameId="simon" onComplete={() => setShowIntro(false)} />}
 
-            <div style={{ width: '100%', maxWidth: 'min(650px, 100%)', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexShrink: 0 }}>
+            <div style={{
+                width: '100%',
+                maxWidth: 'min(600px, 95vw)',
+                height: '100%',
+                maxHeight: '100dvh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                padding: '1rem'
+            }}>
+                {/* Header Section */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '1rem',
+                    flexShrink: 0
+                }}>
                     <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
                         <ArrowLeft size={20} /> Back
                     </Link>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ display: 'flex', gap: '1.5rem', fontSize: '1.3rem', fontWeight: 'bold' }}>
+                        <div style={{ display: 'flex', gap: '1rem', fontSize: '1.1rem', fontWeight: 'bold' }}>
                             <span style={{ color: 'var(--accent)' }}>Score: {score}</span>
                             <span style={{ color: 'var(--text-secondary)' }}>Best: {highScore}</span>
                         </div>
@@ -131,60 +157,90 @@ const SimonSays = () => {
                     </div>
                 </div>
 
-                <div className="card" style={{ textAlign: 'center', position: 'relative', padding: 'clamp(1rem, 4vw, 2rem) clamp(0.75rem, 3vw, 1.5rem)', display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0, overflow: 'hidden', justifyContent: 'space-between' }}>
-                    <h2 className="title" style={{ fontSize: 'clamp(1.2rem, 4vw, 2rem)', marginBottom: 'clamp(0.75rem, 3vw, 1.5rem)', flexShrink: 0 }}>Simon Says</h2>
+                {/* Game Board Container */}
+                <div className="card" style={{
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flex: '1',
+                    minHeight: 0,
+                    overflow: 'hidden',
+                    padding: '1rem',
+                    gap: '1rem'
+                }}>
+                    <h2 className="title" style={{
+                        fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                        margin: 0,
+                        flexShrink: 0
+                    }}>Simon Says</h2>
 
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: '1fr 1fr',
-                        gap: 'clamp(0.75rem, 2vw, 1.5rem)',
-                        marginBottom: 'clamp(0.75rem, 3vw, 1.5rem)',
-                        padding: '0.5rem',
+                        gap: 'clamp(10px, 2vw, 20px)',
+                        width: '100%',
+                        maxWidth: '400px',
+                        aspectRatio: '1/1',
                         pointerEvents: (!userTurn || gameOver) ? 'none' : 'auto',
                         opacity: (!userTurn && !playingSequence && !gameOver) ? 0.6 : 1,
-                        flex: '0 1 auto',
-                        aspectRatio: '1',
-                        maxWidth: 'min(450px, 60vh)',
-                        width: '100%',
-                        margin: '0 auto 1.5rem auto'
                     }}>
                         {COLORS.map((btn) => (
                             <button
                                 key={btn.id}
                                 onClick={() => handleColorClick(btn.id)}
                                 style={{
-                                    aspectRatio: '1',
+                                    width: '100%',
+                                    height: '100%',
                                     backgroundColor: activeColor === btn.id ? btn.active : btn.color,
                                     border: 'none',
                                     borderRadius: 'var(--radius)',
                                     cursor: 'pointer',
                                     transition: 'all 0.1s ease',
                                     transform: activeColor === btn.id ? 'scale(0.95)' : 'scale(1)',
-                                    boxShadow: activeColor === btn.id ? `0 0 40px ${btn.active}` : '0 4px 6px rgba(0,0,0,0.2)'
+                                    boxShadow: activeColor === btn.id ? `0 0 40px ${btn.active}` : '0 4px 6px rgba(0,0,0,0.2)',
+                                    touchAction: 'manipulation' // Prevents double-tap zoom
                                 }}
                             />
                         ))}
                     </div>
 
-                    <div style={{ height: '3rem', marginBottom: '1.5rem', flexShrink: 0 }}>
+                    <div style={{
+                        height: '2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                    }}>
                         {gameOver ? (
-                            <div style={{ color: 'var(--danger)', fontWeight: 'bold', fontSize: 'clamp(1.1rem, 3vw, 1.5rem)' }}>Game Over!</div>
+                            <div style={{ color: 'var(--danger)', fontWeight: 'bold', fontSize: '1.2rem' }}>Game Over!</div>
                         ) : playingSequence ? (
-                            <div style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: 'clamp(1rem, 3vw, 1.2rem)' }}>Watch Sequence...</div>
+                            <div style={{ color: 'var(--accent)', fontWeight: 'bold', fontSize: '1.1rem' }}>Watch Sequence...</div>
                         ) : userTurn ? (
-                            <div style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: 'clamp(1rem, 3vw, 1.2rem)' }}>Your Turn!</div>
+                            <div style={{ color: 'var(--success)', fontWeight: 'bold', fontSize: '1.1rem' }}>Your Turn!</div>
                         ) : (
-                            <div style={{ color: 'var(--text-secondary)', fontSize: 'clamp(1rem, 3vw, 1.2rem)' }}>Press Start to Play</div>
+                            <div style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Press Start to Play</div>
                         )}
                     </div>
+                </div>
 
-                    <button onClick={startGame} className="btn btn-primary" style={{ width: '100%', padding: 'clamp(0.75rem, 2.5vw, 1rem)', fontSize: 'clamp(0.9rem, 2.5vw, 1.1rem)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 'auto' }}>
-                        {gameOver ? <RefreshCw size={22} style={{ marginRight: '0.5rem', flexShrink: 0 }} /> : <Play size={22} style={{ marginRight: '0.5rem', flexShrink: 0 }} />}
+                {/* Footer Section */}
+                <div style={{ marginTop: '1rem', flexShrink: 0 }}>
+                    <button onClick={startGame} className="btn btn-primary" style={{
+                        width: '100%',
+                        padding: '1rem',
+                        fontSize: '1.1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        {gameOver ? <RefreshCw size={22} style={{ marginRight: '0.5rem' }} /> : <Play size={22} style={{ marginRight: '0.5rem' }} />}
                         <span>{gameOver ? 'Try Again' : 'Start Game'}</span>
                     </button>
                 </div>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 
