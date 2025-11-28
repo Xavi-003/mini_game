@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
-import { Settings, Palette, X, Moon, Sun, Trash2 } from 'lucide-react';
+import { Settings, Palette, X, Moon, Sun, Trash2, Download } from 'lucide-react';
 import SoundManager from '../utils/SoundManager';
 
 const THEMES = [
@@ -21,6 +21,25 @@ const THEMES = [
 const SettingsBar = () => {
     const { theme, mode, updateTheme, toggleMode, resetProfile } = useGame();
     const [isOpen, setIsOpen] = useState(false);
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+    React.useEffect(() => {
+        const handler = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
+    };
 
     const toggleSettings = () => {
         setIsOpen(!isOpen);
@@ -102,6 +121,26 @@ const SettingsBar = () => {
                             <X size={20} />
                         </button>
                     </div>
+
+                    {/* Install App Button (Only visible if installable) */}
+                    {deferredPrompt && (
+                        <button
+                            onClick={handleInstallClick}
+                            className="btn btn-primary"
+                            style={{
+                                width: '100%',
+                                padding: 'var(--space-sm)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 'var(--space-sm)',
+                                fontSize: 'var(--text-sm)'
+                            }}
+                        >
+                            <Download size={18} />
+                            Install App
+                        </button>
+                    )}
 
                     {/* Mode Toggle */}
                     <div style={{
