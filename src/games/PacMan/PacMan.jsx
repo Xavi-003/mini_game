@@ -87,6 +87,9 @@ const PacMan = () => {
 
     useEffect(() => {
         const handleKeyPress = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
             if (gameOver || showIntro) return;
 
             switch (e.key) {

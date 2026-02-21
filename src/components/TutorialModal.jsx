@@ -84,15 +84,15 @@ const TutorialModal = ({ isOpen, onClose, title, instructions }) => {
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 'var(--space-sm)',
-                    marginBottom: 'var(--space-lg)',
+                    gap: 'var(--space-md)',
+                    marginBottom: 'var(--space-xl)',
                     paddingRight: 'var(--space-xl)' // Space for close button
                 }}>
-                    <HelpCircle size={32} color="var(--accent)" style={{ flexShrink: 0 }} />
+                    <HelpCircle size={40} color="var(--accent)" style={{ flexShrink: 0 }} />
                     <h2 style={{
                         margin: 0,
-                        fontSize: 'clamp(1.25rem, 4vw, 1.5rem)',
-                        fontWeight: '700'
+                        fontSize: 'clamp(1.5rem, 5vw, 2.25rem)',
+                        fontWeight: '800'
                     }}>
                         How to Play {title}
                     </h2>
@@ -101,8 +101,8 @@ const TutorialModal = ({ isOpen, onClose, title, instructions }) => {
                 {/* Instructions */}
                 <div style={{
                     color: 'var(--text-secondary)',
-                    lineHeight: '1.7',
-                    fontSize: 'var(--text-base)'
+                    lineHeight: '1.8',
+                    fontSize: 'clamp(1.1rem, 3.5vw, 1.35rem)'
                 }}>
                     {instructions.map((step, index) => (
                         <div
@@ -110,32 +110,33 @@ const TutorialModal = ({ isOpen, onClose, title, instructions }) => {
                             style={{
                                 marginBottom: 'var(--space-md)',
                                 display: 'flex',
-                                gap: 'var(--space-sm)',
+                                gap: 'var(--space-md)',
                                 alignItems: 'flex-start'
                             }}
                         >
                             <span style={{
                                 background: 'var(--accent)',
                                 color: 'var(--bg-card)',
-                                width: 'clamp(24px, 5vw, 28px)',
-                                height: 'clamp(24px, 5vw, 28px)',
-                                minWidth: '24px',
-                                minHeight: '24px',
+                                width: 'clamp(32px, 6vw, 36px)',
+                                height: 'clamp(32px, 6vw, 36px)',
+                                minWidth: '32px',
+                                minHeight: '32px',
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: 'var(--text-sm)',
-                                fontWeight: '700',
+                                fontSize: 'clamp(1rem, 3vw, 1.2rem)',
+                                fontWeight: '800',
                                 flexShrink: 0,
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
                             }}>
                                 {index + 1}
                             </span>
                             <span style={{
                                 flex: 1,
                                 color: 'var(--text-primary)',
-                                paddingTop: '2px'
+                                paddingTop: '4px',
+                                fontWeight: '500'
                             }}>
                                 {step}
                             </span>

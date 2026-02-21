@@ -50,8 +50,18 @@ const VampireSurvivors = () => {
     };
 
     useEffect(() => {
-        const handleKeyDown = (e) => setKeys(prev => ({ ...prev, [e.key]: true }));
-        const handleKeyUp = (e) => setKeys(prev => ({ ...prev, [e.key]: false }));
+        const handleKeyDown = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+            setKeys(prev => ({ ...prev, [e.key]: true }));
+        };
+        const handleKeyUp = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+            setKeys(prev => ({ ...prev, [e.key]: false }));
+        };
 
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);

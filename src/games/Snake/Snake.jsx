@@ -98,6 +98,9 @@ const Snake = () => {
 
     useEffect(() => {
         const handleKeyPress = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
             switch (e.key) {
                 case 'ArrowUp': if (direction.y !== 1) setDirection({ x: 0, y: -1 }); break;
                 case 'ArrowDown': if (direction.y !== -1) setDirection({ x: 0, y: 1 }); break;

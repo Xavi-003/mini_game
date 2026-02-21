@@ -203,20 +203,20 @@ input[type="range"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--text-base);
-  font-weight: 600;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  font-size: clamp(1rem, 3.5vw, 1.25rem);
+  font-weight: 700;
   font-family: inherit;
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   outline: none;
   transition: all var(--transition-base);
   white-space: nowrap;
   user-select: none;
   /* Ensure minimum touch target size */
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 56px;
+  min-width: 56px;
 }
 
 .btn-primary {
@@ -530,8 +530,8 @@ textarea:focus {
   justify-content: center;
   padding: var(--space-md);
   /* Calculate height minus header */
-  min-height: calc(100dvh - var(--header-height));
   height: calc(100dvh - var(--header-height));
+  width: 100%;
   overflow: hidden;
 }
 

@@ -37,6 +37,9 @@ const Tron = () => {
 
     useEffect(() => {
         const handleKeyPress = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
             if (gameOver || isPaused || showIntro) return;
 
             setPlayer(prev => {

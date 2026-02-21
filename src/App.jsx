@@ -144,9 +144,10 @@ const Layout = () => {
         transform: `scale(${scale})`,
         transformOrigin: 'top center',
         transition: 'transform var(--transition-slow)',
-        minHeight: isGameRoute ? `calc(100dvh - var(--header-height))` : 'auto',
         height: isGameRoute ? `calc(100dvh - var(--header-height))` : 'auto',
-        overflow: isGameRoute ? 'hidden' : 'auto',
+        overflow: isGameRoute ? 'hidden' : 'visible',
+        display: 'flex',
+        flexDirection: 'column',
         position: 'relative'
       }}>
         <Routes>

@@ -55,6 +55,9 @@ const CrossyRoad = () => {
 
     useEffect(() => {
         const handleKeyPress = (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
             if (gameOver || showIntro) return;
 
             let newPos = { ...playerPos };
