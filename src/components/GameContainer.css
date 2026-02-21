@@ -47,8 +47,9 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* Keep padding so game canvases don't get trapped exactly under the UI edges entirely */
-    padding: 80px var(--space-xs);
+    /* Increase padding dramatically to guarantee game canvases never overlap under the thick HUD controls, 
+       forcing useGameScale to shrink them properly. */
+    padding: 100px var(--space-xs) 120px var(--space-xs);
 }
 
 .game-controls {
