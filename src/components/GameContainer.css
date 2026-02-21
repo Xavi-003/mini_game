@@ -39,17 +39,14 @@
 
 .game-board-area {
     position: absolute;
-    top: 0;
+    top: 100px;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 120px;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* Increase padding dramatically to guarantee game canvases never overlap under the thick HUD controls, 
-       forcing useGameScale to shrink them properly. */
-    padding: 100px var(--space-xs) 120px var(--space-xs);
 }
 
 .game-controls {
