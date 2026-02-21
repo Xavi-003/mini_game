@@ -31,6 +31,7 @@ const VampireSurvivors = () => {
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
+    const [isPaused, setIsPaused] = useState(false);
     const [keys, setKeys] = useState({});
     const containerRef = useRef(null);
     const scale = useGameScale(containerRef, GAME_WIDTH, GAME_HEIGHT);
@@ -45,6 +46,7 @@ const VampireSurvivors = () => {
         setLevel(1);
         setGameStarted(true);
         setGameOver(false);
+        setIsPaused(false);
         setShowWinnerModal(false);
         SoundManager.playClick();
     };
@@ -72,7 +74,7 @@ const VampireSurvivors = () => {
     }, []);
 
     useEffect(() => {
-        if (!gameStarted || gameOver || showIntro) return;
+        if (!gameStarted || gameOver || showIntro || isPaused) return;
 
         const gameLoop = setInterval(() => {
             // Move player
@@ -196,11 +198,11 @@ const VampireSurvivors = () => {
         }, 1000 / 60);
 
         return () => clearInterval(gameLoop);
-    }, [gameStarted, gameOver, showIntro, keys, player, enemies, level, timeLeft, score, highScore, addPoints, incrementStreak, resetStreak]);
+    }, [gameStarted, gameOver, showIntro, isPaused, keys, player, enemies, level, timeLeft, score, highScore, addPoints, incrementStreak, resetStreak]);
 
     // Timer
     useEffect(() => {
-        if (!gameStarted || gameOver || showIntro) return;
+        if (!gameStarted || gameOver || showIntro || isPaused) return;
 
         const timer = setInterval(() => {
             setTimeLeft(prev => {
@@ -225,7 +227,7 @@ const VampireSurvivors = () => {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [gameStarted, gameOver, showIntro, score, highScore, addPoints, incrementStreak]);
+    }, [gameStarted, gameOver, showIntro, isPaused, score, highScore, addPoints, incrementStreak]);
 
     if (showIntro) {
         return <GameIntro gameId="vampire" onComplete={() => setShowIntro(false)} />;
@@ -249,11 +251,20 @@ const VampireSurvivors = () => {
     );
 
     const footerContent = (
-        !gameStarted && !gameOver && (
+        !gameStarted && !gameOver ? (
             <button onClick={resetGame} className="btn btn-primary" style={{ width: '100%', maxWidth: '200px' }}>
                 Start Game
             </button>
-        )
+        ) : gameStarted && !gameOver ? (
+            <button
+                onClick={() => { setIsPaused(!isPaused); SoundManager.playClick(); }}
+                className="btn"
+                style={{ width: '100%', maxWidth: '200px' }}
+                disabled={gameOver}
+            >
+                {isPaused ? <><Play size={20} style={{ marginRight: 'var(--space-xs)' }} /> Start</> : <><Pause size={20} style={{ marginRight: 'var(--space-xs)' }} /> Pause</>}
+            </button>
+        ) : null
     );
 
     return (

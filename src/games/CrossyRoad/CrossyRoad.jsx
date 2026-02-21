@@ -58,7 +58,7 @@ const CrossyRoad = () => {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
                 e.preventDefault();
             }
-            if (gameOver || showIntro) return;
+            if (gameOver || showIntro || isPaused) return;
 
             let newPos = { ...playerPos };
             switch (e.key) {
@@ -101,10 +101,10 @@ const CrossyRoad = () => {
 
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [playerPos, gameOver, showIntro, addPoints, incrementStreak]);
+    }, [playerPos, gameOver, showIntro, isPaused, addPoints, incrementStreak]);
 
     useEffect(() => {
-        if (gameOver || showIntro) return;
+        if (gameOver || showIntro || isPaused) return;
 
         const interval = setInterval(() => {
             setCars(prev => prev.map(car => {
@@ -120,10 +120,10 @@ const CrossyRoad = () => {
         }, 50);
 
         return () => clearInterval(interval);
-    }, [gameOver, showIntro]);
+    }, [gameOver, showIntro, isPaused]);
 
     useEffect(() => {
-        if (gameOver || showIntro) return;
+        if (gameOver || showIntro || isPaused) return;
 
         for (let car of cars) {
             const carCells = [Math.floor(car.x), Math.ceil(car.x)];

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { ArrowLeft, RefreshCw, HelpCircle } from 'lucide-react';
+import { ArrowLeft, RefreshCw, HelpCircle, Play, Pause } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorialModal from '../../components/TutorialModal';
 import GameIntro from '../../components/GameIntro';
@@ -29,6 +29,7 @@ const PacMan = () => {
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
+    const [isPaused, setIsPaused] = useState(false);
     const [direction, setDirection] = useState({ x: 0, y: 0 });
     const containerRef = useRef(null);
     const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE);
@@ -76,6 +77,7 @@ const PacMan = () => {
         setGameOver(false);
         setShowWinnerModal(false);
         setDirection({ x: 0, y: 0 });
+        setIsPaused(false);
         SoundManager.playClick();
     };
 
@@ -90,7 +92,7 @@ const PacMan = () => {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
                 e.preventDefault();
             }
-            if (gameOver || showIntro) return;
+            if (gameOver || showIntro || isPaused) return;
 
             switch (e.key) {
                 case 'ArrowUp': setDirection({ x: 0, y: -1 }); break;
@@ -102,10 +104,10 @@ const PacMan = () => {
 
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
-    }, [gameOver, showIntro]);
+    }, [gameOver, showIntro, isPaused]);
 
     useEffect(() => {
-        if (gameOver || showIntro) return;
+        if (gameOver || showIntro || isPaused) return;
 
         const interval = setInterval(() => {
             setPacman(prev => {
@@ -168,11 +170,11 @@ const PacMan = () => {
         }, 200);
 
         return () => clearInterval(interval);
-    }, [gameOver, showIntro, direction, walls, dots, score, highScore, addPoints, incrementStreak]);
+    }, [gameOver, showIntro, isPaused, direction, walls, dots, score, highScore, addPoints, incrementStreak]);
 
     // Check ghost collision
     useEffect(() => {
-        if (gameOver || showIntro) return;
+        if (gameOver || showIntro || isPaused) return;
 
         if (ghosts.some(g => g.x === pacman.x && g.y === pacman.y)) {
             setGameOver(true);
@@ -184,7 +186,7 @@ const PacMan = () => {
                 localStorage.setItem('pacmanHighScore', score.toString());
             }
         }
-    }, [pacman, ghosts, gameOver, showIntro, score, highScore, addPoints, resetStreak]);
+    }, [pacman, ghosts, gameOver, showIntro, isPaused, score, highScore, addPoints, resetStreak]);
 
     if (showIntro) {
         return <GameIntro gameId="pacman" onComplete={() => setShowIntro(false)} />;
@@ -207,8 +209,19 @@ const PacMan = () => {
         </div>
     );
 
+    const footerContent = (
+        <button
+            onClick={() => { setIsPaused(!isPaused); SoundManager.playClick(); }}
+            className="btn"
+            style={{ width: '100%', maxWidth: '200px' }}
+            disabled={gameOver}
+        >
+            {isPaused ? <><Play size={20} style={{ marginRight: 'var(--space-xs)' }} /> Start</> : <><Pause size={20} style={{ marginRight: 'var(--space-xs)' }} /> Pause</>}
+        </button>
+    );
+
     return (
-        <GameContainer header={headerContent}>
+        <GameContainer header={headerContent} footer={footerContent}>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}

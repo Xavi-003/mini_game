@@ -25,6 +25,7 @@ const MemoryMatch = () => {
     const [moves, setMoves] = useState(0);
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
+    const [gameStarted, setGameStarted] = useState(false);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     const containerRef = useRef(null);
     const scale = useGameScale(containerRef, 600, 800); // Approximate dimensions
@@ -42,15 +43,23 @@ const MemoryMatch = () => {
         setMoves(0);
         setDisabled(false);
         setShowWinnerModal(false);
+        setGameStarted(true);
         SoundManager.playClick();
     };
 
     useEffect(() => {
-        shuffleCards();
+        // Initialize cards but don't start the game until button press
+        const shuffled = CARD_PAIRS
+            .sort(() => Math.random() - 0.5)
+            .map((emoji, index) => ({
+                id: index,
+                icon: emoji,
+            }));
+        setCards(shuffled);
     }, []);
 
     const handleClick = (id) => {
-        if (disabled || flipped.includes(id) || solved.includes(id)) return;
+        if (!gameStarted || disabled || flipped.includes(id) || solved.includes(id)) return;
 
         SoundManager.playClick();
 
@@ -139,7 +148,7 @@ const MemoryMatch = () => {
 
     const footerContent = (
         <button
-            onClick={shuffleCards}
+            onClick={gameStarted ? shuffleCards : shuffleCards}
             className="btn btn-primary"
             style={{
                 width: '100%',
@@ -151,8 +160,17 @@ const MemoryMatch = () => {
                 gap: 'var(--space-xs)'
             }}
         >
-            <RefreshCw size={20} />
-            <span>Restart Game</span>
+            {gameStarted ? (
+                <>
+                    <RefreshCw size={20} />
+                    <span>Restart Game</span>
+                </>
+            ) : (
+                <>
+                    <span style={{ fontSize: '1.2rem', marginRight: '4px' }}>✨</span>
+                    <span>Start Game</span>
+                </>
+            )}
         </button>
     );
 
