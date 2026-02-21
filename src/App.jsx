@@ -37,17 +37,13 @@ const Header = () => {
   const isGameRoute = ['/memory', '/snake', '/rps', '/simon', '/trex', '/flappy', '/jetpack', '/crossy', '/stack', '/whac-a-mole', '/breakout', '/bubble', '/peggle', '/pacman', '/tron', '/vampire'].includes(location.pathname);
 
   return (
-    <nav style={{
+    <nav className="glass-header" style={{
       height: 'var(--header-height)',
-      padding: 'var(--space-sm) var(--space-md)',
-      borderBottom: '1px solid var(--border-subtle)',
+      padding: '0 var(--space-lg)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      background: 'var(--bg-header)',
-      backdropFilter: 'blur(10px)',
-      position: 'sticky',
-      top: 0,
+      position: 'relative',
       zIndex: 100,
       gap: 'var(--space-sm)'
     }}>
@@ -70,7 +66,7 @@ const Header = () => {
 
       <div style={{
         display: 'flex',
-        gap: 'clamp(0.5rem, 2vw, 1.5rem)',
+        gap: 'var(--space-md)',
         alignItems: 'center',
         flexWrap: 'nowrap',
         flexShrink: 0
@@ -81,11 +77,14 @@ const Header = () => {
             alignItems: 'center',
             gap: 'var(--space-xs)',
             color: 'var(--accent)',
-            fontSize: 'var(--text-sm)'
+            fontSize: 'var(--text-sm)',
+            background: 'var(--bg-surface)',
+            padding: 'var(--space-xs) var(--space-sm)',
+            borderRadius: 'var(--radius-full)'
           }}
           title="Total Points"
         >
-          <Trophy size={18} style={{ flexShrink: 0 }} />
+          <Trophy size={16} style={{ flexShrink: 0 }} />
           <span style={{ fontWeight: 'bold' }}>{points}</span>
         </div>
 
@@ -94,30 +93,32 @@ const Header = () => {
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-xs)',
-            color: '#f97316',
-            fontSize: 'var(--text-sm)'
+            color: 'var(--warning)',
+            fontSize: 'var(--text-sm)',
+            background: 'var(--bg-surface)',
+            padding: 'var(--space-xs) var(--space-sm)',
+            borderRadius: 'var(--radius-full)'
           }}
           title="Current Streak"
         >
-          <Flame size={18} style={{ flexShrink: 0 }} />
+          <Flame size={16} style={{ flexShrink: 0 }} />
           <span style={{ fontWeight: 'bold' }}>{streak}</span>
         </div>
 
         <Link
           to="/profile"
+          className="btn-secondary"
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-xs)',
             padding: 'var(--space-xs) var(--space-sm)',
-            background: 'var(--bg-elevated)',
             borderRadius: 'var(--radius-full)',
             fontSize: 'var(--text-sm)',
-            transition: 'background-color var(--transition-base)'
+            height: 'auto',
+            border: 'none'
           }}
           onClick={() => SoundManager.playClick()}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-elevated)'}
         >
           <span style={{ fontSize: '1.2rem', flexShrink: 0 }}>{profile.avatar}</span>
           <span style={{ fontWeight: '600' }} className="hide-mobile">{profile.name}</span>
@@ -132,24 +133,13 @@ const Header = () => {
    =================================== */
 
 const Layout = () => {
-  const { scale } = useGame();
   const location = useLocation();
   const isGameRoute = ['/memory', '/snake', '/rps', '/simon', '/trex', '/flappy', '/jetpack', '/crossy', '/stack', '/whac-a-mole', '/breakout', '/bubble', '/peggle', '/pacman', '/tron', '/vampire'].includes(location.pathname);
 
   return (
     <div className="app-container">
       <Header />
-      <main style={{
-        flex: 1,
-        transform: `scale(${scale})`,
-        transformOrigin: 'top center',
-        transition: 'transform var(--transition-slow)',
-        height: isGameRoute ? `calc(100dvh - var(--header-height))` : 'auto',
-        overflow: isGameRoute ? 'hidden' : 'visible',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative'
-      }}>
+      <main className="main-content" style={{ overflowY: isGameRoute ? 'hidden' : 'auto' }}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
@@ -197,18 +187,20 @@ const AppContent = () => {
 
 function App() {
   const [isLoading, setIsLoading] = React.useState(true);
+  const [isFadingOut, setIsFadingOut] = React.useState(false);
 
   React.useEffect(() => {
-    // Simulate initial loading
     const timer = setTimeout(() => {
-      setIsLoading(false);
+      setIsFadingOut(true);
+      // After fade-out animation completes, remove loader entirely
+      setTimeout(() => setIsLoading(false), 500);
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <GameProvider>
-      {isLoading && <PageLoader />}
+      {isLoading && <PageLoader fadingOut={isFadingOut} />}
       <AppContent />
     </GameProvider>
   );

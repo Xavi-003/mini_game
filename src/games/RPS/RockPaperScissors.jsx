@@ -7,7 +7,6 @@ import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const CHOICES = [
     { name: 'rock', icon: '✊', beats: 'scissors' },
@@ -25,7 +24,6 @@ const RockPaperScissors = () => {
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, 700, 800);
 
     const { addPoints, incrementStreak, resetStreak } = useGame();
 
@@ -130,7 +128,6 @@ const RockPaperScissors = () => {
                 }}
             >
                 <div style={{
-                    transform: `scale(${scale})`,
                     transformOrigin: 'center center',
                     width: '700px',
                     textAlign: 'center',

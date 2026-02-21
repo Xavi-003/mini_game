@@ -7,7 +7,6 @@ import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const GRID_SIZE = 20;
 // Dynamic cell size based on viewport would be ideal, but for now let's reduce it to fit standard screens
@@ -28,7 +27,6 @@ const Snake = () => {
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE + 100);
 
     const generateFood = useCallback(() => {
         return {
@@ -190,7 +188,6 @@ const Snake = () => {
             >
                 <div style={{
                     position: 'relative',
-                    transform: `scale(${scale})`,
                     transformOrigin: 'center center',
                     width: '450px', // Fixed width for scaling
                     textAlign: 'center',

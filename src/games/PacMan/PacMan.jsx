@@ -7,10 +7,8 @@ import WinnerModal from '../../components/WinnerModal';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const GRID_SIZE = 15;
-const CELL_SIZE = 25;
 
 const PacMan = () => {
     const { addPoints, incrementStreak, resetStreak } = useGame();
@@ -31,8 +29,6 @@ const PacMan = () => {
     const [showIntro, setShowIntro] = useState(true);
     const [isPaused, setIsPaused] = useState(false);
     const [direction, setDirection] = useState({ x: 0, y: 0 });
-    const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE);
 
     const initMaze = () => {
         const newWalls = [];
@@ -194,8 +190,8 @@ const PacMan = () => {
 
     const headerContent = (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                <ArrowLeft size={20} /> Back
+            <Link to="/" className="btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)', color: 'var(--text-primary)', textDecoration: 'none', padding: 'var(--space-xs) var(--space-sm)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)' }} onClick={() => SoundManager.playClick()}>
+                <ArrowLeft size={16} /> Back
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
                 <div style={{ textAlign: 'right' }}>
@@ -221,7 +217,7 @@ const PacMan = () => {
     );
 
     return (
-        <GameContainer header={headerContent} footer={footerContent}>
+        <>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -242,86 +238,81 @@ const PacMan = () => {
                 pointsEarned={50}
             />
 
-            <div
-                ref={containerRef}
-                style={{
+            <GameContainer header={headerContent} footer={footerContent}>
+                <div style={{
+                    flex: 1,
                     width: '100%',
-                    height: '100%',
+                    minHeight: 0,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    overflow: 'hidden'
-                }}
-            >
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-                    gap: '1px',
-                    padding: '1px',
-                    background: '#000',
-                    borderRadius: 'var(--radius)',
-                    border: '3px solid #2563eb',
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'center center',
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    aspectRatio: '1/1'
+                    padding: 'var(--space-sm)'
                 }}>
-                    {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                        const x = i % GRID_SIZE;
-                        const y = Math.floor(i / GRID_SIZE);
-                        const isWall = walls.some(w => w.x === x && w.y === y);
-                        const isPacman = pacman.x === x && pacman.y === y;
-                        const ghost = ghosts.find(g => g.x === x && g.y === y);
-                        const dot = dots.find(d => !d.eaten && d.x === x && d.y === y);
+                    <div style={{
+                        width: '100%',
+                        maxWidth: 'min(100%, 600px)',
+                        aspectRatio: '1',
+                        display: 'grid',
+                        gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+                        gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+                        background: '#0a0a0a',
+                        borderRadius: 'var(--radius-lg)',
+                        border: '2px solid var(--accent)',
+                        boxShadow: 'var(--shadow-lg), 0 0 20px rgba(59, 130, 246, 0.4)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
+                            const x = i % GRID_SIZE;
+                            const y = Math.floor(i / GRID_SIZE);
+                            const isWall = walls.some(w => w.x === x && w.y === y);
+                            const isPacman = pacman.x === x && pacman.y === y;
+                            const ghost = ghosts.find(g => g.x === x && g.y === y);
+                            const dot = dots.find(d => !d.eaten && d.x === x && d.y === y);
 
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    width: `${CELL_SIZE}px`,
-                                    height: `${CELL_SIZE}px`,
-                                    background: isWall ? '#2563eb' : '#000',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: isPacman || ghost ? '18px' : '8px'
-                                }}
-                            >
-                                {isPacman && '🟡'}
-                                {ghost && <div style={{ width: '20px', height: '20px', background: ghost.color, borderRadius: '50% 50% 0 0' }} />}
-                                {dot && <div style={{ width: '4px', height: '4px', background: '#fff', borderRadius: '50%' }} />}
+                            return (
+                                <div
+                                    key={i}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontSize: isPacman || ghost ? 'clamp(12px, 3vmin, 24px)' : '8px'
+                                    }}
+                                >
+                                    {isPacman && '🟡'}
+                                    {ghost && <div style={{ width: '20px', height: '20px', background: ghost.color, borderRadius: '50% 50% 0 0' }} />}
+                                    {dot && <div style={{ width: '4px', height: '4px', background: '#fff', borderRadius: '50%' }} />}
+                                </div>
+                            );
+                        })}
+
+                        {gameOver && (
+                            <div className="glass-panel" style={{
+                                position: 'absolute',
+                                inset: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                background: showWinnerModal ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)',
+                                zIndex: 20
+                            }}>
+                                <h3 style={{ color: '#fff', marginBottom: 'var(--space-sm)' }}>
+                                    {showWinnerModal ? 'You Win!' : 'Game Over!'}
+                                </h3>
+                                <p style={{ marginBottom: 'var(--space-md)', color: '#fff' }}>Score: {score}</p>
+                                <button onClick={resetGame} className="btn btn-primary" style={{ background: '#fff', color: '#000' }}>
+                                    <RefreshCw size={20} style={{ marginRight: 'var(--space-xs)' }} /> Play Again
+                                </button>
                             </div>
-                        );
-                    })}
-
-                    {gameOver && (
-                        <div style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            background: showWinnerModal ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)',
-                            border: `2px solid ${showWinnerModal ? 'var(--success)' : 'var(--danger)'}`,
-                            borderRadius: 'var(--radius)',
-                            padding: 'var(--space-lg)',
-                            textAlign: 'center',
-                            zIndex: 20,
-                            boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
-                            backdropFilter: 'blur(4px)'
-                        }}>
-                            <h3 style={{ color: '#fff', marginBottom: 'var(--space-sm)' }}>
-                                {showWinnerModal ? 'You Win!' : 'Game Over!'}
-                            </h3>
-                            <p style={{ marginBottom: 'var(--space-md)', color: '#fff' }}>Score: {score}</p>
-                            <button onClick={resetGame} className="btn btn-primary" style={{ background: '#fff', color: '#000' }}>
-                                <RefreshCw size={20} style={{ marginRight: 'var(--space-xs)' }} /> Play Again
-                            </button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
-            </div>
-        </GameContainer>
+            </GameContainer>
+        </>
     );
 };
 

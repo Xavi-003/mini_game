@@ -5,7 +5,6 @@ import TutorialModal from '../../components/TutorialModal';
 import GameIntro from '../../components/GameIntro';
 import GameContainer from '../../components/GameContainer';
 import { useGame } from '../../context/GameContext';
-import useGameScale from '../../hooks/useGameScale';
 import SoundManager from '../../utils/SoundManager';
 
 const GRID_SIZE = 30;
@@ -21,7 +20,6 @@ const Tron = () => {
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE);
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(parseInt(localStorage.getItem('tronHighScore')) || 0);
 
@@ -202,7 +200,6 @@ const Tron = () => {
                     background: '#000',
                     border: '2px solid var(--border-subtle)',
                     borderRadius: 'var(--radius)',
-                    transform: `scale(${scale})`,
                     transformOrigin: 'center center',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
                     position: 'relative' // Added for absolute positioning of game over overlay

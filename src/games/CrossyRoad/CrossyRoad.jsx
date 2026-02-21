@@ -5,7 +5,6 @@ import TutorialModal from '../../components/TutorialModal';
 import GameIntro from '../../components/GameIntro';
 import GameContainer from '../../components/GameContainer';
 import { useGame } from '../../context/GameContext';
-import useGameScale from '../../hooks/useGameScale';
 import SoundManager from '../../utils/SoundManager';
 
 const GRID_SIZE = 12;
@@ -21,8 +20,6 @@ const CrossyRoad = () => {
     const [isPaused, setIsPaused] = useState(false);
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
-    const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE);
 
     const initializeCars = () => {
         const newCars = [];
@@ -150,8 +147,8 @@ const CrossyRoad = () => {
 
     const headerContent = (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                <ArrowLeft size={20} /> Back
+            <Link to="/" className="btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)', color: 'var(--text-primary)', textDecoration: 'none', padding: 'var(--space-xs) var(--space-sm)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)' }} onClick={() => SoundManager.playClick()}>
+                <ArrowLeft size={16} /> Back
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
                 <div style={{ textAlign: 'right' }}>
@@ -177,7 +174,7 @@ const CrossyRoad = () => {
     );
 
     return (
-        <GameContainer header={headerContent} footer={footerContent}>
+        <>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -191,82 +188,82 @@ const CrossyRoad = () => {
                 ]}
             />
 
-            <div
-                ref={containerRef}
-                style={{
+            <GameContainer header={headerContent} footer={footerContent}>
+                <div style={{
+                    flex: 1,
                     width: '100%',
-                    height: '100%',
+                    minHeight: 0,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    overflow: 'hidden'
-                }}
-            >
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-                    width: `${GRID_SIZE * CELL_SIZE}px`,
-                    height: `${GRID_SIZE * CELL_SIZE}px`,
-                    background: 'var(--bg-card)',
-                    border: '2px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius)',
-                    padding: '1px',
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'center center',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                    padding: 'var(--space-sm)'
                 }}>
-                    {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-                        const x = i % GRID_SIZE;
-                        const y = Math.floor(i / GRID_SIZE);
+                    <div style={{
+                        width: '100%',
+                        maxWidth: 'min(100%, 600px)',
+                        aspectRatio: '1',
+                        display: 'grid',
+                        gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+                        gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-glass)',
+                        borderRadius: 'var(--radius-lg)',
+                        padding: '4px',
+                        boxShadow: 'var(--shadow-lg)',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
+                            const x = i % GRID_SIZE;
+                            const y = Math.floor(i / GRID_SIZE);
 
-                        const isPlayer = playerPos.x === x && playerPos.y === y;
-                        const isCar = cars.some(car => {
-                            const carCells = [Math.floor(car.x), Math.ceil(car.x)];
-                            return carCells.includes(x) && car.y === y;
-                        });
-                        const isRoad = y > 1 && y < GRID_SIZE - 2;
-                        const isGoal = y === 0;
+                            const isPlayer = playerPos.x === x && playerPos.y === y;
+                            const isCar = cars.some(car => {
+                                const carCells = [Math.floor(car.x), Math.ceil(car.x)];
+                                return carCells.includes(x) && car.y === y;
+                            });
+                            const isRoad = y > 1 && y < GRID_SIZE - 2;
+                            const isGoal = y === 0;
 
-                        return (
-                            <div
-                                key={i}
-                                style={{
-                                    width: CELL_SIZE,
-                                    height: CELL_SIZE,
-                                    background: isPlayer ? '#facc15' : (isCar ? '#ef4444' : (isGoal ? '#22c55e' : (isRoad ? 'var(--bg-elevated)' : 'var(--bg-secondary)'))),
-                                    borderRadius: isPlayer || isCar ? '50%' : '2px',
-                                    boxShadow: isPlayer ? '0 0 10px rgba(250, 204, 21, 0.8)' : (isCar ? '0 0 8px rgba(239, 68, 68, 0.6)' : 'none'),
-                                    border: isGoal ? '2px solid #16a34a' : 'none'
-                                }}
-                            />
-                        );
-                    })}
+                            return (
+                                <div
+                                    key={i}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        background: isPlayer ? 'var(--warning)' : (isCar ? 'var(--danger)' : (isGoal ? 'var(--success)' : (isRoad ? 'var(--bg-panel)' : 'transparent'))),
+                                        borderRadius: isPlayer || isCar ? '50%' : '2px',
+                                        boxShadow: isPlayer ? '0 0 15px var(--warning)' : (isCar ? '0 0 10px rgba(239, 68, 68, 0.8)' : 'none'),
+                                        border: isGoal ? '1px solid rgba(16, 185, 129, 0.5)' : '1px solid rgba(255,255,255,0.02)',
+                                        transform: isPlayer ? 'scale(0.8)' : (isCar ? 'scale(0.85)' : 'none'),
+                                        transition: isPlayer ? 'all 0.1s ease' : 'none',
+                                        zIndex: isPlayer || isCar ? 10 : 1
+                                    }}
+                                />
+                            );
+                        })}
 
-                    {gameOver && (
-                        <div style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: 'var(--bg-overlay)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backdropFilter: 'blur(4px)',
-                            zIndex: 20
-                        }}>
-                            <h3 style={{ fontSize: 'var(--text-2xl)', color: 'var(--danger)', marginBottom: 'var(--space-md)' }}>Game Over</h3>
-                            <p style={{ fontSize: 'var(--text-lg)', marginBottom: 'var(--space-lg)' }}>Score: {score}</p>
-                            <button onClick={resetGame} className="btn btn-primary">
-                                <RefreshCw size={20} style={{ marginRight: 'var(--space-xs)' }} /> Play Again
-                            </button>
-                        </div>
-                    )}
+                        {gameOver && (
+                            <div className="glass-panel" style={{
+                                position: 'absolute',
+                                inset: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 20
+                            }}>
+                                <h3 style={{ fontSize: 'var(--text-3xl)', color: 'var(--danger)', marginBottom: 'var(--space-md)', textShadow: '0 2px 10px rgba(239, 68, 68, 0.5)' }}>Game Over</h3>
+                                <p style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-lg)', fontWeight: 'bold' }}>Score: {score}</p>
+                                <button onClick={resetGame} className="btn btn-primary">
+                                    <RefreshCw size={20} style={{ marginRight: 'var(--space-xs)' }} /> Play Again
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </GameContainer>
+            </GameContainer>
+        </>
     );
 };
 

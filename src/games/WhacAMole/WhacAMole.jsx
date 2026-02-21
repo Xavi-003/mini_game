@@ -5,7 +5,6 @@ import TutorialModal from '../../components/TutorialModal';
 import GameIntro from '../../components/GameIntro';
 import GameContainer from '../../components/GameContainer';
 import { useGame } from '../../context/GameContext';
-import useGameScale from '../../hooks/useGameScale';
 import SoundManager from '../../utils/SoundManager';
 
 const GRID_SIZE = 3;
@@ -26,7 +25,6 @@ const WhacAMole = () => {
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GAME_WIDTH, GAME_HEIGHT);
 
     const resetGame = () => {
         setMoles(Array(GRID_SIZE * GRID_SIZE).fill(false));
@@ -177,7 +175,6 @@ const WhacAMole = () => {
                     height: `${GAME_WIDTH}px`, // Square grid
                     maxWidth: '100%',
                     aspectRatio: '1',
-                    transform: `scale(${scale})`,
                     transformOrigin: 'center center'
                 }}>
                     {moles.map((isMoleUp, index) => (

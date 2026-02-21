@@ -6,7 +6,6 @@ import GameIntro from '../../components/GameIntro';
 import GameContainer from '../../components/GameContainer';
 import WinnerModal from '../../components/WinnerModal';
 import { useGame } from '../../context/GameContext';
-import useGameScale from '../../hooks/useGameScale';
 import SoundManager from '../../utils/SoundManager';
 
 const GAME_WIDTH = 500;
@@ -33,8 +32,6 @@ const VampireSurvivors = () => {
     const [showIntro, setShowIntro] = useState(true);
     const [isPaused, setIsPaused] = useState(false);
     const [keys, setKeys] = useState({});
-    const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GAME_WIDTH, GAME_HEIGHT);
 
     const resetGame = () => {
         setPlayer({ x: GAME_WIDTH / 2, y: GAME_HEIGHT / 2, vx: 0, vy: 0 });
@@ -235,8 +232,8 @@ const VampireSurvivors = () => {
 
     const headerContent = (
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)', color: 'var(--text-secondary)' }} onClick={() => SoundManager.playClick()}>
-                <ArrowLeft size={20} /> Back
+            <Link to="/" className="btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-xs)', color: 'var(--text-primary)', textDecoration: 'none', padding: 'var(--space-xs) var(--space-sm)', background: 'var(--bg-elevated)', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)' }} onClick={() => SoundManager.playClick()}>
+                <ArrowLeft size={16} /> Back
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
                 <div style={{ textAlign: 'right' }}>
@@ -268,7 +265,7 @@ const VampireSurvivors = () => {
     );
 
     return (
-        <GameContainer header={headerContent} footer={footerContent}>
+        <>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -289,114 +286,109 @@ const VampireSurvivors = () => {
                 pointsEarned={100}
             />
 
-            <div
-                ref={containerRef}
-                style={{
+            <GameContainer header={headerContent} footer={footerContent}>
+                <div style={{
+                    flex: 1,
                     width: '100%',
-                    height: '100%',
+                    minHeight: 0,
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    overflow: 'hidden'
-                }}
-            >
-                <div style={{
-                    width: `${GAME_WIDTH}px`,
-                    height: `${GAME_HEIGHT}px`,
-                    background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%)',
-                    border: '2px solid var(--border-subtle)',
-                    borderRadius: 'var(--radius)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'center center',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                    padding: 'var(--space-sm)'
                 }}>
-                    {/* Player */}
                     <div style={{
-                        position: 'absolute',
-                        left: player.x - PLAYER_SIZE / 2,
-                        top: player.y - PLAYER_SIZE / 2,
-                        width: PLAYER_SIZE,
-                        height: PLAYER_SIZE,
-                        background: '#3b82f6',
-                        borderRadius: '50%',
-                        border: '2px solid #60a5fa',
-                        boxShadow: '0 0 15px rgba(59, 130, 246, 0.6)'
-                    }} />
-
-                    {/* Projectiles */}
-                    {projectiles.map((proj, i) => (
-                        <div key={`proj-${i}`} style={{
-                            position: 'absolute',
-                            left: proj.x - 3,
-                            top: proj.y - 3,
-                            width: 6,
-                            height: 6,
-                            background: '#facc15',
-                            borderRadius: '50%',
-                            boxShadow: '0 0 5px #facc15'
-                        }} />
-                    ))}
-
-                    {/* Enemies */}
-                    {enemies.map((enemy, i) => (
-                        <div key={`enemy-${i}`} style={{
-                            position: 'absolute',
-                            left: enemy.x - ENEMY_SIZE / 2,
-                            top: enemy.y - ENEMY_SIZE / 2,
-                            width: ENEMY_SIZE,
-                            height: ENEMY_SIZE,
-                            background: '#ef4444',
-                            borderRadius: '50%',
-                            border: '2px solid #dc2626'
-                        }} />
-                    ))}
-
-                    {/* Orbs */}
-                    {orbs.map((orb, i) => (
-                        <div key={`orb-${i}`} style={{
-                            position: 'absolute',
-                            left: orb.x - ORB_SIZE / 2,
-                            top: orb.y - ORB_SIZE / 2,
-                            width: ORB_SIZE,
-                            height: ORB_SIZE,
-                            background: '#22c55e',
-                            borderRadius: '50%',
-                            boxShadow: '0 0 8px #22c55e'
-                        }} />
-                    ))}
-
-                    {gameOver && (
+                        width: '100%',
+                        maxWidth: 'min(100%, 600px)',
+                        aspectRatio: '1',
+                        background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-panel) 100%)',
+                        border: '1px solid var(--border-glass)',
+                        borderRadius: 'var(--radius-lg)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        boxShadow: 'var(--shadow-xl)'
+                    }}>
+                        {/* Player */}
                         <div style={{
                             position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: 'var(--bg-overlay)',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backdropFilter: 'blur(4px)'
-                        }}>
-                            <h3 style={{
-                                fontSize: 'var(--text-2xl)',
-                                color: timeLeft === 0 ? 'var(--success)' : 'var(--danger)',
-                                marginBottom: 'var(--space-md)'
+                            left: `${((player.x - PLAYER_SIZE / 2) / GAME_WIDTH) * 100}%`,
+                            top: `${((player.y - PLAYER_SIZE / 2) / GAME_HEIGHT) * 100}%`,
+                            width: `${(PLAYER_SIZE / GAME_WIDTH) * 100}%`,
+                            height: `${(PLAYER_SIZE / GAME_HEIGHT) * 100}%`,
+                            background: 'var(--accent)',
+                            borderRadius: '50%',
+                            border: '2px solid var(--bg-panel)',
+                            boxShadow: '0 0 15px var(--accent-glow)'
+                        }} />
+
+                        {/* Projectiles */}
+                        {projectiles.map((proj, i) => (
+                            <div key={`proj-${i}`} style={{
+                                position: 'absolute',
+                                left: `${((proj.x - 3) / GAME_WIDTH) * 100}%`,
+                                top: `${((proj.y - 3) / GAME_HEIGHT) * 100}%`,
+                                width: `${(6 / GAME_WIDTH) * 100}%`,
+                                height: `${(6 / GAME_HEIGHT) * 100}%`,
+                                background: 'var(--warning)',
+                                borderRadius: '50%',
+                                boxShadow: '0 0 5px var(--warning)'
+                            }} />
+                        ))}
+
+                        {/* Enemies */}
+                        {enemies.map((enemy, i) => (
+                            <div key={`enemy-${i}`} style={{
+                                position: 'absolute',
+                                left: `${((enemy.x - ENEMY_SIZE / 2) / GAME_WIDTH) * 100}%`,
+                                top: `${((enemy.y - ENEMY_SIZE / 2) / GAME_HEIGHT) * 100}%`,
+                                width: `${(ENEMY_SIZE / GAME_WIDTH) * 100}%`,
+                                height: `${(ENEMY_SIZE / GAME_HEIGHT) * 100}%`,
+                                background: 'var(--danger)',
+                                borderRadius: '50%',
+                                border: '1px solid rgba(239, 68, 68, 0.5)'
+                            }} />
+                        ))}
+
+                        {/* Orbs */}
+                        {orbs.map((orb, i) => (
+                            <div key={`orb-${i}`} style={{
+                                position: 'absolute',
+                                left: `${((orb.x - ORB_SIZE / 2) / GAME_WIDTH) * 100}%`,
+                                top: `${((orb.y - ORB_SIZE / 2) / GAME_HEIGHT) * 100}%`,
+                                width: `${(ORB_SIZE / GAME_WIDTH) * 100}%`,
+                                height: `${(ORB_SIZE / GAME_HEIGHT) * 100}%`,
+                                background: 'var(--success)',
+                                borderRadius: '50%',
+                                boxShadow: '0 0 10px rgba(34, 197, 94, 0.5)'
+                            }} />
+                        ))}
+
+                        {gameOver && (
+                            <div className="glass-panel" style={{
+                                position: 'absolute',
+                                inset: 0,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 20
                             }}>
-                                {timeLeft === 0 ? 'You Survived!' : 'Game Over'}
-                            </h3>
-                            <p style={{ fontSize: 'var(--text-lg)', marginBottom: 'var(--space-lg)' }}>Score: {score}</p>
-                            <button onClick={resetGame} className="btn btn-primary">
-                                <RefreshCw size={20} style={{ marginRight: 'var(--space-xs)' }} /> Play Again
-                            </button>
-                        </div>
-                    )}
+                                <h3 style={{
+                                    fontSize: 'var(--text-2xl)',
+                                    color: timeLeft === 0 ? 'var(--success)' : 'var(--danger)',
+                                    marginBottom: 'var(--space-md)'
+                                }}>
+                                    {timeLeft === 0 ? 'You Survived!' : 'Game Over'}
+                                </h3>
+                                <p style={{ fontSize: 'var(--text-lg)', marginBottom: 'var(--space-lg)' }}>Score: {score}</p>
+                                <button onClick={resetGame} className="btn btn-primary">
+                                    <RefreshCw size={20} style={{ marginRight: 'var(--space-xs)' }} /> Play Again
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </GameContainer>
+            </GameContainer>
+        </>
     );
 };
 

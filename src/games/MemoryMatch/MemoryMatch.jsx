@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, RefreshCw, HelpCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import TutorialModal from '../../components/TutorialModal';
@@ -7,7 +7,6 @@ import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const CARD_EMOJIS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
 const CARD_PAIRS = [...CARD_EMOJIS, ...CARD_EMOJIS];
@@ -27,8 +26,6 @@ const MemoryMatch = () => {
     const [showIntro, setShowIntro] = useState(true);
     const [gameStarted, setGameStarted] = useState(false);
     const [showWinnerModal, setShowWinnerModal] = useState(false);
-    const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, 600, 800); // Approximate dimensions
 
     const shuffleCards = () => {
         const shuffled = CARD_PAIRS
@@ -114,16 +111,22 @@ const MemoryMatch = () => {
         }}>
             <Link
                 to="/"
+                className="btn"
                 style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 'var(--space-xs)',
-                    color: 'var(--text-secondary)',
-                    fontSize: 'var(--text-sm)'
+                    color: 'var(--text-primary)',
+                    fontSize: 'var(--text-sm)',
+                    textDecoration: 'none',
+                    padding: 'var(--space-xs) var(--space-sm)',
+                    background: 'var(--bg-elevated)',
+                    borderRadius: 'var(--radius-full)',
+                    border: '1px solid var(--border-subtle)'
                 }}
                 onClick={() => SoundManager.playClick()}
             >
-                <ArrowLeft size={20} />
+                <ArrowLeft size={16} />
                 <span>Back</span>
             </Link>
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)' }}>
@@ -152,6 +155,7 @@ const MemoryMatch = () => {
             className="btn btn-primary"
             style={{
                 width: '100%',
+                maxWidth: '400px',
                 fontSize: 'var(--text-base)',
                 padding: 'var(--space-md)',
                 display: 'flex',
@@ -175,7 +179,7 @@ const MemoryMatch = () => {
     );
 
     return (
-        <GameContainer header={headerContent} footer={footerContent}>
+        <>
             <TutorialModal
                 isOpen={isTutorialOpen}
                 onClose={() => setIsTutorialOpen(false)}
@@ -196,93 +200,102 @@ const MemoryMatch = () => {
                 pointsEarned={20}
             />
 
-            <div
-                ref={containerRef}
-                style={{
+            <GameContainer header={headerContent} footer={footerContent}>
+                <div style={{
                     width: '100%',
                     height: '100%',
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    overflow: 'hidden'
-                }}
-            >
-                <div style={{
-                    transform: `scale(${scale})`,
-                    transformOrigin: 'center center',
-                    textAlign: 'center',
-                    padding: 'var(--space-md)',
-                    display: 'flex',
                     flexDirection: 'column',
-                    gap: 'var(--space-md)',
-                    width: '600px' // Fixed width for scaling
+                    alignItems: 'center',
+                    gap: 'var(--space-md)'
                 }}>
-                    <h2 className="title" style={{
-                        fontSize: 'var(--text-xl)',
-                        marginBottom: '0'
-                    }}>
-                        Memory Match
-                    </h2>
-
-                    {isWon && (
-                        <div style={{
-                            color: 'var(--success)',
-                            fontSize: 'var(--text-base)',
-                            fontWeight: 'bold',
-                            animation: 'bounce 0.5s ease'
+                    <div style={{ flexShrink: 0, textAlign: 'center' }}>
+                        <h2 className="title title-gradient" style={{
+                            fontSize: 'var(--text-2xl)',
+                            marginBottom: '0'
                         }}>
-                            🎉 You Won in {moves} moves!
-                        </div>
-                    )}
+                            Memory Match
+                        </h2>
 
-                    {/* Card Grid */}
+                        {isWon && (
+                            <div className="animate-bounce-slow" style={{
+                                color: 'var(--success)',
+                                fontSize: 'var(--text-lg)',
+                                fontWeight: 'bold',
+                                marginTop: 'var(--space-sm)',
+                                textShadow: '0 2px 10px rgba(16, 185, 129, 0.3)'
+                            }}>
+                                🎉 You Won in {moves} moves!
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Intrinsic Responsiveness Card Grid container */}
                     <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(4, 1fr)',
-                        gap: 'var(--space-sm)',
-                        aspectRatio: '1',
+                        flex: 1,
                         width: '100%',
-                        margin: '0 auto'
+                        minHeight: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}>
-                        {cards.map((card) => {
-                            const isFlipped = flipped.includes(card.id) || solved.includes(card.id);
-                            return (
-                                <button
-                                    key={card.id}
-                                    onClick={() => handleClick(card.id)}
-                                    style={{
-                                        aspectRatio: '1',
-                                        backgroundColor: isFlipped ? 'var(--bg-card)' : 'var(--accent)',
-                                        border: isFlipped ? '2px solid var(--accent)' : 'none',
-                                        borderRadius: 'var(--radius-md)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        cursor: isFlipped ? 'default' : 'pointer',
-                                        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                                        transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0)',
-                                        boxShadow: isFlipped ? 'none' : '0 10px 15px -3px rgba(0,0,0,0.3)',
-                                        minHeight: '44px',
-                                        minWidth: '44px'
-                                    }}
-                                    disabled={isFlipped}
-                                    aria-label={isFlipped ? `Card ${card.id + 1}: ${card.icon}` : `Card ${card.id + 1}`}
-                                >
-                                    {isFlipped && (
-                                        <span style={{
-                                            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
-                                            transform: 'rotateY(180deg)'
-                                        }}>
-                                            {card.icon}
-                                        </span>
-                                    )}
-                                </button>
-                            );
-                        })}
+                        <div style={{
+                            height: '100%',
+                            maxHeight: '500px',
+                            maxWidth: '100%',
+                            aspectRatio: '1',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 1fr)',
+                            gap: 'var(--space-sm)',
+                        }}>
+                            {cards.map((card) => {
+                                const isFlipped = flipped.includes(card.id) || solved.includes(card.id);
+                                return (
+                                    <button
+                                        key={card.id}
+                                        onClick={() => handleClick(card.id)}
+                                        style={{
+                                            aspectRatio: '1',
+                                            backgroundColor: isFlipped ? 'var(--bg-panel)' : 'var(--accent)',
+                                            border: isFlipped ? '2px solid var(--border-glass)' : 'none',
+                                            borderRadius: 'var(--radius-md)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: isFlipped ? 'default' : 'pointer',
+                                            transition: 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                            transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0) scale(1)',
+                                            boxShadow: isFlipped ? 'var(--shadow-sm)' : 'var(--shadow-md)',
+                                            minHeight: '44px',
+                                            minWidth: '44px',
+                                            padding: '0'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isFlipped && !disabled) e.currentTarget.style.transform = 'rotateY(0) scale(1.05)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isFlipped) e.currentTarget.style.transform = 'rotateY(0) scale(1)';
+                                        }}
+                                        disabled={isFlipped || disabled}
+                                        aria-label={isFlipped ? `Card ${card.id + 1}: ${card.icon}` : `Card ${card.id + 1}`}
+                                    >
+                                        {isFlipped && (
+                                            <span style={{
+                                                fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+                                                transform: 'rotateY(180deg)',
+                                                filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.2))'
+                                            }}>
+                                                {card.icon}
+                                            </span>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
-            </div>
-        </GameContainer>
+            </GameContainer>
+        </>
     );
 };
 

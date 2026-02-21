@@ -7,7 +7,6 @@ import GameIntro from '../../components/GameIntro';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const COLORS = [
     { id: 'green', color: '#22c55e', active: '#4ade80', freq: 300 },
@@ -29,7 +28,6 @@ const SimonSays = () => {
     const [showWinnerModal, setShowWinnerModal] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, 600, 700);
 
     const { addPoints, incrementStreak, resetStreak } = useGame();
 
@@ -170,7 +168,6 @@ const SimonSays = () => {
             >
                 <div className="card" style={{
                     position: 'relative',
-                    transform: `scale(${scale})`,
                     transformOrigin: 'center center',
                     display: 'flex',
                     flexDirection: 'column',

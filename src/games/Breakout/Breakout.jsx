@@ -6,7 +6,6 @@ import GameIntro from '../../components/GameIntro';
 import WinnerModal from '../../components/WinnerModal';
 import GameContainer from '../../components/GameContainer';
 import { useGame } from '../../context/GameContext';
-import useGameScale from '../../hooks/useGameScale';
 import SoundManager from '../../utils/SoundManager';
 
 const GAME_WIDTH = 400;
@@ -34,7 +33,6 @@ const Breakout = () => {
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GAME_WIDTH, GAME_HEIGHT);
 
     const initBricks = () => {
         const newBricks = [];
@@ -294,7 +292,6 @@ const Breakout = () => {
                         position: 'relative',
                         overflow: 'hidden',
                         cursor: 'none',
-                        transform: `scale(${scale})`,
                         transformOrigin: 'center center',
                         boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
                     }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Gamepad2, Trophy, Flame, Star } from 'lucide-react';
 
-const PageLoader = () => {
+const PageLoader = ({ fadingOut = false }) => {
     return (
         <div style={{
             position: 'fixed',
@@ -9,13 +9,15 @@ const PageLoader = () => {
             left: 0,
             width: '100vw',
             height: '100vh',
-            background: 'var(--bg-primary)',
+            background: 'var(--bg-base)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 9999,
-            transition: 'opacity 0.5s ease-out'
+            opacity: fadingOut ? 0 : 1,
+            transition: 'opacity 0.5s ease-out',
+            pointerEvents: fadingOut ? 'none' : 'auto'
         }}>
             <div className="loader-content" style={{
                 display: 'flex',

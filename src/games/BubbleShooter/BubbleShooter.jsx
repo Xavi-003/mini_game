@@ -7,7 +7,6 @@ import WinnerModal from '../../components/WinnerModal';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const GRID_SIZE = 8;
 const CELL_SIZE = 45;
@@ -24,7 +23,6 @@ const BubbleShooter = () => {
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showIntro, setShowIntro] = useState(true);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GRID_SIZE * CELL_SIZE, GRID_SIZE * CELL_SIZE + 100); // Add some height for the shooter area
 
     const initGrid = () => {
         const newGrid = Array(GRID_SIZE).fill(null).map((_, row) =>
@@ -197,7 +195,6 @@ const BubbleShooter = () => {
             >
                 <div style={{
                     position: 'relative',
-                    transform: `scale(${scale})`,
                     transformOrigin: 'center center',
                     display: 'grid',
                     gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,

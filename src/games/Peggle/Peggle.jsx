@@ -7,7 +7,6 @@ import WinnerModal from '../../components/WinnerModal';
 import { useGame } from '../../context/GameContext';
 import SoundManager from '../../utils/SoundManager';
 import GameContainer from '../../components/GameContainer';
-import useGameScale from '../../hooks/useGameScale';
 
 const GAME_WIDTH = 400;
 const GAME_HEIGHT = 500;
@@ -29,7 +28,6 @@ const Peggle = () => {
     const [showIntro, setShowIntro] = useState(true);
     const [aimAngle, setAimAngle] = useState(0);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GAME_WIDTH, GAME_HEIGHT);
 
     const initPegs = () => {
         const newPegs = [];
@@ -213,7 +211,6 @@ const Peggle = () => {
                     onClick={shootBall}
                     style={{
                         position: 'relative',
-                        transform: `scale(${scale})`,
                         transformOrigin: 'center center',
                         width: `${GAME_WIDTH}px`,
                         height: `${GAME_HEIGHT}px`,

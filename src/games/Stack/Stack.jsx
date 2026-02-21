@@ -5,7 +5,6 @@ import TutorialModal from '../../components/TutorialModal';
 import GameIntro from '../../components/GameIntro';
 import GameContainer from '../../components/GameContainer';
 import { useGame } from '../../context/GameContext';
-import useGameScale from '../../hooks/useGameScale';
 import SoundManager from '../../utils/SoundManager';
 
 const GAME_WIDTH = 300;
@@ -25,7 +24,6 @@ const Stack = () => {
     const [showIntro, setShowIntro] = useState(true);
     const [speed, setSpeed] = useState(2);
     const containerRef = useRef(null);
-    const scale = useGameScale(containerRef, GAME_WIDTH, GAME_HEIGHT);
 
     const resetGame = () => {
         setBlocks([{ x: GAME_WIDTH / 2 - INITIAL_WIDTH / 2, width: INITIAL_WIDTH }]);
@@ -178,7 +176,6 @@ const Stack = () => {
                         position: 'relative',
                         overflow: 'hidden',
                         cursor: 'pointer',
-                        transform: `scale(${scale})`,
                         transformOrigin: 'center center',
                         boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
                     }}
